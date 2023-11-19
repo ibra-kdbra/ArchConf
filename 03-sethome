@@ -14,7 +14,7 @@ main() {
     exit
   }
 
-  # copy pivate keys if rsa.iso.gpg present
+  # copy private keys if rsa.iso.gpg present
   if [[ -f ~/rsa.iso.gpg && ! -f rsa.iso ]]; then
     echo -e "${TYS_Y}(TYS) Copy rsa keys to ${home_path}${TYS_NC}"
     gpg --output rsa.iso --decrypt ~/rsa.iso.gpg
