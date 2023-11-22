@@ -1,0 +1,69 @@
+#!/bin/bash
+# mount_partitions
+# mount partitions according to install script partition schemes
+# usage: ./mount_partitions
+
+. common.sh
+. defaults.sh
+
+main() {
+  local device npart iscrypt=false bootmode=BIOS bootloader="${TYS_DEFAULT_BOOTLOADER}"
+
+  mountpoint /mnt &>/dev/null && {
+    echo "${TYS_Y}A device is already mounted on /mnt${TYS_NC}"
+    exit
+  }
+
+  # select block device
+  device=$(select_block_device) || exit $?
+
+  # get partitions count for block device
+  npart=$(grep -c "${device}[0-9]" /proc/partitions)
+  [[ "${npart}" =~ ^(2|3)$ ]] || exit
+
+  device=/dev/"${device}"
+
+  # verify if last partition (root) is crypted
+  cryptsetup luksDump "${device}${npart}" &>/dev/null && iscrypt=true
+
+  case "${npart}" in
+    2 | 3)
+      # mount root first
+      if [[ "${iscrypt}" == true ]]; then
+        [[ -b "${TYS_DEFAULT_LUKSROOT}" ]] ||
+          cryptsetup open "${device}${npart}" "$(basename ${TYS_DEFAULT_LUKSROOT})" || exit
+        mount "${TYS_DEFAULT_LUKSROOT}" /mnt || exit
+      else
+        mount "${device}${npart}" /mnt || exit
+      fi
+
+      # verify bootmode
+      [[ -f /sys/firmware/efi/fw_platform_size ]] && bootmode="UEFI$(cat /sys/firmware/efi/fw_platform_size)"
+
+      # verify if systemd-boot update service is enable on /mnt/...
+      [[ -f /mnt/etc/systemd/system/sysinit.target.wants/systemd-boot-update.service ]] && bootloader=S
+      
+      # if not crypted, uefi and using grub then mount part2 to /mnt${TYS_DEFAULT_EFI}
+      if [[ ! -b "${TYS_DEFAULT_LUKSROOT}" && "${bootloader}" == G && "${bootmode}" != BIOS ]]; then
+        mount "${device}$((npart - 1))" /mnt"${TYS_DEFAULT_EFI}" || exit
+      else
+        mount "${device}$((npart - 1))" /mnt/boot || exit
+      fi
+      
+      # mount third partition if any
+      [[ ${npart} == 3 ]] && mount "${device}1" /mnt"${TYS_DEFAULT_EFI}"
+      ;;
+    *)
+      echo "Unknowed partition scheme"
+      ;;
+  esac
+
+  echo "${TYS_Y}Verify detected configuration...${TYS_NC}"
+  echo "${TYS_Y}Partitions:${TYS_NC} ${npart}"
+  echo "${TYS_Y}Crypted:${TYS_NC} ${iscrypt}"
+  echo "${TYS_Y}Bootloader:${TYS_NC} ${bootloader}"
+  echo "${TYS_Y}Bootmode:${TYS_NC} ${bootmode}"
+
+  lsblk
+}
+main "${@}"
