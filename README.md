@@ -76,3 +76,8 @@ Notes:
 * openssh
 
 Note: The packages from packages.txt are installed in step 2
+
+
+Back to update, now with ArchoLinux, plasma6.
+
+Open to the new desktop environments.
