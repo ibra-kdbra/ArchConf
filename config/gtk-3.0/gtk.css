@@ -1,0 +1,20 @@
+.terminator-terminal-window notebook tab {
+    min-height: 0;
+    padding: 0px;
+    margin: 0px;
+}
+.terminator-terminal-window notebook tab button {
+    min-height: 0;
+    padding: 0px;
+    margin: 0px;
+}
+
+scrollbar slider {
+    min-width: 3px;
+    min-height: 3px;
+}
+
+vte-terminal {
+    padding: 1px 5px;
+}
+
