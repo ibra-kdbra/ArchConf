@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Hook to update "GB localization" lines in `packages` within `README.md`
+# For automation - copy this hook to .git/hooks/
+# For manual execution - run it in the repository's root directory
+
+main_git_path=$(git rev-parse --show-toplevel)
+readme_file="$main_git_path/README.md"
+packages_file="$main_git_path/packages"
+
+# Extract the line number for 'enable change locale' in the packages file
+packages_data=$(grep -n 'enable change locale' "$packages_file" | cut -d: -f1)
+
+# Extract the current line number from the README.md (assumes it's on line 16)
+readme_data=$(sed -n '16p' "$readme_file" | sed -E 's/^\*.*: ([0-9]{3}).*/\1/')
+
+# Update the README.md if the line numbers do not match
+if [[ $readme_data != $packages_data ]]; then
+    sed -Ei "15s/[0-9]{3} -/$packages_data -/" "$readme_file"
+    packages_data=$((packages_data + 1))
+    sed -Ei "15s/- [0-9]{3}/- $packages_data/" "$readme_file"
+    git add "$readme_file"
+fi
