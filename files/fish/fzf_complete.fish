@@ -112,3 +112,59 @@ function __fzf_complete_opts_common
     end
     echo --cycle --reverse --inline-info
 end
+
+function __fzf_complete_opts_tab_accepts
+    echo --bind tab:accept,btab:cancel
+end
+
+function __fzf_complete_opts_tab_walks
+    echo --bind tab:down,btab:upgit c
+end
+
+function __fzf_complete_opts_preview
+    set -l file (status -f)
+    echo --preview-window=right:wrap --preview="fish\ '$file'\ __fzf_complete_preview\ '{1..}'"
+    # echo --with-nth=1 --preview-window=right:wrap --preview="fish\ '$file'\ __fzf_complete_preview\ '{1}'\ '{2..}'"
+end
+
+test "$argv[1]" = "__fzf_complete_preview"; and __fzf_complete_preview $argv[2..3]
+
+function __fzf_complete_opts_0 -d 'basic single selection with tab accept'
+    __fzf_complete_opts_common
+    echo --no-multi
+    __fzf_complete_opts_tab_accepts
+end
+
+function __fzf_complete_opts_1 -d 'single selection with preview and tab accept'
+    __fzf_complete_opts_0
+    __fzf_complete_opts_preview
+end
+
+function __fzf_complete_opts_2 -d 'single selection with preview and tab walks'
+    __fzf_complete_opts_1
+    __fzf_complete_opts_tab_walks
+end
+
+function __fzf_complete_opts_3 -d 'multi selection with preview'
+    __fzf_complete_opts_common
+    echo --multi
+    __fzf_complete_opts_preview
+end
+
+function __fzf_complete_opts -d 'fzf options for fish tab completion'
+    switch $FZF_COMPLETE
+        case 0
+            __fzf_complete_opts_0
+        case 1
+            __fzf_complete_opts_1
+        case 2
+            __fzf_complete_opts_2
+        case 3
+            __fzf_complete_opts_3
+        case '*'
+            echo $FZF_COMPLETE
+    end
+    if set -q FZF_COMPLETE_OPTS
+        echo $FZF_COMPLETE_OPTS
+    end
+end
