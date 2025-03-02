@@ -1,0 +1,348 @@
+# i3 config file
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+set $mod Mod4
+set $alt Mod1
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# font pango:monospace 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango:Sans 7
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+######### Appearance #########
+
+# colors
+set $light_gray          #f3f4f5
+set $gray                #757575
+set $dark_gray           #222222
+
+set $red                 #bd2c40
+set $light_blue          #99d3ff
+
+# class                 border              background          text             indicator
+client.focused          $dark_gray          $gray               $dark_gray       $gray
+client.unfocused        $dark_gray          $dark_gray          $gray            $dark_gray
+client.urgent           $dark_gray          $light_gray         $dark_gray       $dark_gray
+
+# Borders
+for_window [class="^.*"] border pixel 0
+
+###############################
+######### Keybindings #########
+###############################
+# $>xev # show key name
+
+######### Main #########
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# Reload the configuration file
+bindsym $mod+Shift+r reload
+# Restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Control+r restart
+
+# Exit, Reboot, Poweroff
+bindsym $mod+Shift+p exec --no-startup-id ~/.config/scripts/power.sh
+# Exit i3 (logs you out of your X session)
+bindsym $mod+Control+p exec i3-msg exit
+
+# Picom restart
+bindsym $mod+p exec --no-startup-id ~/.config/scripts/picom_restart.sh
+# Kill window
+bindsym --release $alt+Control+Delete exec --no-startup-id xkill
+# Reboot system
+bindsym $mod+$alt+Control+Delete exec --no-startup-id systemctl -i reboot
+# Change background
+bindsym $mod+o exec --no-startup-id systemctl --user start setbg.service
+# Change mouse hand
+bindsym $mod+Control+m exec --no-startup-id ~/.config/scripts/mouse_right_left.sh
+# Change mouse scrolling button
+bindsym $mod+Shift+m exec --no-startup-id ~/.config/scripts/mouse_scrolling_botton.sh
+
+######### Menu #########
+
+# dmenu
+bindsym $mod+d exec --no-startup-id "dmenu_run -b -i"
+
+# jgmenu
+bindsym $mod+grave exec --no-startup-id jgmenu_run
+
+# rofi
+bindsym $mod+a exec --no-startup-id "rofi -show drun"
+bindsym $mod+Shift+a exec --no-startup-id "rofi -show run"
+bindsym $mod+Tab exec --no-startup-id "rofi -show window"
+
+# Brightness
+bindsym $mod+Shift+z exec --no-startup-id ~/.config/scripts/brightness.sh change
+
+# Clipboard
+bindsym $mod+c exec --no-startup-id "clipmenu"
+
+# Password
+bindsym $mod+s exec --no-startup-id ~/.config/scripts/password.sh
+bindsym $mod+Shift+s exec --no-startup-id ~/.config/scripts/password_generate.sh
+
+# Volume
+bindsym $mod+z exec --no-startup-id ~/.config/scripts/volume.sh change
+
+# Workspaces
+bindsym $mod+x exec --no-startup-id ~/.config/scripts/workspaces.sh change
+bindsym $mod+Shift+x exec --no-startup-id ~/.config/scripts/workspaces.sh move
+
+######### System #########
+
+# Volume control
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+
+# Screenshot
+bindsym Print exec --no-startup-id ~/.config/scripts/screenshot.sh full
+bindsym $mod+Print exec --no-startup-id ~/.config/scripts/screenshot.sh region
+bindsym $mod+Shift+Print exec --no-startup-id ~/.config/scripts/screenshot.sh edit
+# bindsym Print exec --no-startup-id gnome-screenshot --interactive
+
+# Notifications
+bindsym $mod+Shift+n exec --no-startup-id dunstctl close-all
+bindsym $mod+Control+n exec --no-startup-id dunstctl history-pop
+
+# Vpn
+# bindsym $mod+Shift+v exec --no-startup-id ~/.config/scripts/vpn_openvpn.sh change
+bindsym $mod+Shift+v exec --no-startup-id ~/.config/scripts/vpn_wireguard.sh change
+
+# System updates
+bindsym $mod+Shift+u exec --no-startup-id ~/.config/scripts/updates.sh change
+
+######### Apps #########
+
+# Terminal
+bindsym $mod+Return exec --no-startup-id ~/.config/scripts/shell.sh alacritty
+bindsym $mod+Shift+Return exec --no-startup-id ~/.config/scripts/shell.sh terminator
+bindsym $mod+Control+Return exec --no-startup-id alacritty --command ranger
+
+# Browser
+bindsym $mod+b exec --no-startup-id firefox
+
+# Run htop
+bindsym $mod+t exec --no-startup-id terminator -x htop
+
+# Fn keys
+bindsym XF86Explorer exec --no-startup-id pcmanfm
+# bindsym XF86Search exec --no-startup-id remmina
+bindsym XF86Search exec --no-startup-id google-chrome-stable
+bindsym XF86Calculator exec --no-startup-id gnome-calculator
+bindsym XF86Tools exec --no-startup-id evim
+
+######### Window #########
+
+# change focus
+bindsym $mod+Left focus left
+bindsym $mod+h focus left
+bindsym $mod+Down focus down
+bindsym $mod+j focus down
+bindsym $mod+Up focus up
+bindsym $mod+k focus up
+bindsym $mod+Right focus right
+bindsym $mod+l focus right
+
+# move focused window
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+l move right
+
+# resize window (you can also use the mouse for that)
+bindsym $mod+Control+Left resize shrink width 2 px or 2 ppt
+bindsym $mod+Control+h resize shrink width 2 px or 2 ppt
+bindsym $mod+Control+Down resize grow height 2 px or 2 ppt
+bindsym $mod+Control+j resize grow height 2 px or 2 ppt
+bindsym $mod+Control+Up resize shrink height 2 px or 2 ppt
+bindsym $mod+Control+k resize shrink height 2 px or 2 ppt
+bindsym $mod+Control+Right resize grow width 2 px or 2 ppt
+bindsym $mod+Control+l resize grow width 2 px or 2 ppt
+# or
+bindsym $mod+Shift+space mode "  "
+mode "  " {
+    bindsym Left resize shrink width 2 px or 2 ppt
+    bindsym h resize shrink width 2 px or 2 ppt
+    bindsym Down resize grow height 2 px or 2 ppt
+    bindsym j resize grow height 2 px or 2 ppt
+    bindsym Up resize shrink height 2 px or 2 ppt
+    bindsym k resize shrink height 2 px or 2 ppt
+    bindsym Right resize grow width 2 px or 2 ppt
+    bindsym l resize grow width 2 px or 2 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+Shift+space mode "default"
+}
+
+# change focus
+bindsym $alt+Tab focus next
+
+######### Layouts #########
+
+# change container layout (stacked(recursive), tabbed, toggle split)
+bindsym $mod+w layout toggle
+bindsym $mod+e layout toggle split
+
+# split in vertical orientation
+bindsym $mod+Shift+w split v
+# split in horizontal orientation
+bindsym $mod+Control+w split h
+
+# toggle tiling / floating
+bindsym $mod+Shift+f floating toggle
+
+# enter fullscreen mode for the focused container
+bindsym $mod+Control+f fullscreen toggle
+
+# gaps
+gaps inner 5
+bindsym $mod+Control+space mode "  "
+mode "  " {
+    bindsym Down gaps inner current plus 5
+    bindsym Right gaps inner current plus 5
+    bindsym Up gaps inner current minus 5
+    bindsym Left gaps inner current minus 5
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+Control+space mode "default"
+}
+
+######### Workspaces #########
+
+# switch to workspace
+bindsym $mod+1 workspace $workspace1
+bindsym $mod+2 workspace $workspace2
+bindsym $mod+3 workspace $workspace3
+bindsym $mod+4 workspace $workspace4
+bindsym $mod+5 workspace $workspace5
+bindsym $mod+6 workspace $workspace6
+bindsym $mod+7 workspace $workspace7
+bindsym $mod+8 workspace $workspace8
+bindsym $mod+9 workspace $workspace9
+bindsym $mod+0 workspace $workspace10
+
+bindsym $alt+Control+Left workspace prev_on_output
+bindsym $alt+Control+h workspace prev_on_output
+bindsym $alt+Control+Right workspace next_on_output
+bindsym $alt+Control+l workspace next_on_output
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $workspace1; workspace $workspace1
+bindsym $mod+Shift+2 move container to workspace $workspace2; workspace $workspace2
+bindsym $mod+Shift+3 move container to workspace $workspace3; workspace $workspace3
+bindsym $mod+Shift+4 move container to workspace $workspace4; workspace $workspace4
+bindsym $mod+Shift+5 move container to workspace $workspace5; workspace $workspace5
+bindsym $mod+Shift+6 move container to workspace $workspace6; workspace $workspace6
+bindsym $mod+Shift+7 move container to workspace $workspace7; workspace $workspace7
+bindsym $mod+Shift+8 move container to workspace $workspace8; workspace $workspace8
+bindsym $mod+Shift+9 move container to workspace $workspace9; workspace $workspace9
+bindsym $mod+Shift+0 move container to workspace $workspace10; workspace $workspace10
+
+bindsym $alt+Control+Down exec --no-startup-id ~/.config/i3/move_window.sh left
+bindsym $alt+Control+j exec --no-startup-id ~/.config/i3/move_window.sh left
+bindsym $alt+Control+Up exec --no-startup-id ~/.config/i3/move_window.sh right
+bindsym $alt+Control+k exec --no-startup-id ~/.config/i3/move_window.sh right
+
+# scratchpad
+bindsym $mod+Shift+BackSpace move scratchpad
+bindsym $mod+BackSpace scratchpad show
+
+######### Mouse on the keyboard #########
+
+bindsym $mod+Home mode "  "
+mode "  " {
+    bindsym Left exec --no-startup-id xdotool mousemove_relative -- -50 0
+    bindsym Shift+Left exec --no-startup-id xdotool mousemove_relative -- -10 0
+    bindsym Control+Left exec --no-startup-id xdotool mousemove_relative -- -250 0
+
+    bindsym Right exec --no-startup-id xdotool mousemove_relative -- 50 0
+    bindsym Shift+Right exec --no-startup-id xdotool mousemove_relative -- 10 0
+    bindsym Control+Right exec --no-startup-id xdotool mousemove_relative -- 250 0
+
+    bindsym Up exec --no-startup-id xdotool mousemove_relative -- 0 -50
+    bindsym Shift+Up exec --no-startup-id xdotool mousemove_relative -- 0 -10
+    bindsym Control+Up exec --no-startup-id xdotool mousemove_relative -- 0 -250
+
+    bindsym Down exec --no-startup-id xdotool mousemove_relative -- 0 50
+    bindsym Shift+Down exec --no-startup-id xdotool mousemove_relative -- 0 10
+    bindsym Control+Down exec --no-startup-id xdotool mousemove_relative -- 0 250
+
+    bindsym Return exec --no-startup-id xdotool click 1
+    bindsym Page_Up exec --no-startup-id xdotool click 4
+    bindsym Page_Down exec --no-startup-id xdotool click 5
+    bindsym Insert exec --no-startup-id xdotool click 9
+    bindsym Delete exec --no-startup-id xdotool click 8
+
+    bindsym Escape mode "default"
+    bindsym $mod+Home mode "default"
+}
+
+######### Apps Layouts and Workspaces #########
+
+# Workspaces
+set $workspace1 "1:  "
+set $workspace2 "2:  "
+set $workspace3 "3:  "
+set $workspace4 "4:  "
+set $workspace5 "5:  "
+set $workspace6 "6:  "
+set $workspace7 "7:  "
+set $workspace8 "8:  "
+set $workspace9 "9:  "
+set $workspace10 "10:  "
+
+# Workspace for app:
+# $>xprop # show class name
+
+for_window [class="Pcmanfm"] layout tabbed
+
+assign [class="firefox"] $workspace5
+for_window [class="firefox"] layout tabbed
+
+assign [class="vlc"] $workspace7
+for_window [class="vlc"] layout tabbed
+
+assign [class="transmission-gtk"] $workspace8
+for_window [class="transmission-gtk"] layout tabbed
+
+assign [class="VirtualBox"] $workspace9
+assign [class="Gnome-boxes"] $workspace9
+for_window [class="VirtualBox"] layout tabbed
+for_window [class="Gnome-boxes"] layout tabbed
+
+assign [class="remmina"] $workspace10
+assign [class="xfreerdp"] $workspace10
+assign [class="Google-chrome"] $workspace10
+for_window [class="remmina"] layout tabbed
+for_window [class="xfreerdp"] layout tabbed
+for_window [class="Google-chrome"] layout tabbed
+
+# Floating mode
+for_window [ class="Terminator" ] floating enable
+for_window [ class="Gvim" ] floating enable
+for_window [ class="gnome-calculator" ] floating enable
+for_window [ class="Gnome-screenshot" ] floating enable
+for_window [ class="torbrowser-launcher" ] floating enable
+for_window [ class="isaac-ng.exe" ] floating enable
+
+######### Execute on start #########
+
+exec --no-startup-id ~/.config/i3/autostart.sh
+
+# vim:ft=i3config
+
