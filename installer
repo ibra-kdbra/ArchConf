@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+
+echo
+echo "############################################"
+echo "########### Arch Linux Installer ###########"
+echo "############################################"
+echo "Check out the Arch Linux Installation Guide"
+echo "############################################"
+echo
+
+# Set the keyboard layout
+loadkeys en
+
+# Check EFI boot mode
+table=`ls /sys/firmware/efi/efivars 2>&1 | grep -o "cannot access"`
+if [[ "$table" == "cannot access" ]]; then
+    table="BIOS"
+else
+    table="UEFI"
+fi
+
+# Check network
+ip link
+ping -c3 archlinux.org
+
+# Update the system clock
+timedatectl set-ntp true
+sleep 3; echo
+timedatectl status
+
+echo
+echo "####################"
+echo "Click any key; ctrl-c is abort"
+echo "####################"
+read -n1 -p">"; echo
+
+# Create disk table; format and mount it
+
+lsblk; echo
+
+echo
+echo "####################"
+echo "Boot mode is $table"
+echo "####################"
+while [[ $am != "1" ]] && [[ $am != "2" ]]; do
+    echo "Please, choose:"
+    echo "1) auto mount mode - only for /dev/vda"
+    echo "2) manual mount mode"
+    echo "####################"
+    read -n1 -p">" am
+done
+echo
+
+if [[ $table == "UEFI" ]]; then
+    if [[ $am == "1" ]]; then
+        echo
+        echo "####################"
+        echo "Important:"
+        echo "Select label type: gpt"
+        echo "Create the following new partions:"
+        echo "/dev/vda1 - for efi"
+        echo "/dev/vda2 - for swap"
+        echo "/dev/vda3 - for root"
+        echo "####################"
+        echo "Click any key; ctrl-c is abort"
+        echo "####################"
+        read -n1 -p">"; echo
+
+        cfdisk
+        lsblk
+        echo
+        echo "####################"
+        echo "Click any key; ctrl-c is abort"
+        echo "####################"
+        read -n1 -p">"; echo
+
+        mkfs.fat -F32 /dev/vda1
+        mkswap /dev/vda2
+        mkfs.ext4 /dev/vda3
+
+        mount /dev/vda3 /mnt
+        swapon /dev/vda2
+        mkdir -p /mnt/boot/efi
+        mount /dev/vda1 /mnt/boot/efi
+    else
+        echo
+        echo "####################"
+        echo "Important:"
+        echo "Select label type: gpt"
+        echo "/mnt          - for root"
+        echo "/mnt/boot/efi - for efi"
+        echo "####################"
+        echo "1 - cfdisk, fdisk, gdisk                         - partitions manager"
+        echo "2 - lsblk  or lsblk -fs                          - show partitions"
+        echo "3 - mkfs.ext4 /dev/sdX, mkfs.fat -F32 /dev/sdY   - for format"
+        echo "4 - mount /dev/sdX /mnt                          - for mount /"
+        echo "5 - mkdir -p /mnt/boot/efi                       - create dir for EFI"
+        echo "6 - mount /dev/sdY /mnt/boot/efi                 - for mount /boot/efi"
+        echo "7 - mkswap /dev/sdZ; swapon /dev/sdZ             - for swap"
+        echo "####################"
+        echo "after in shell do: # exit"
+        echo "####################"
+        bash
+    fi
+else
+    if [[ $am == "1" ]]; then
+        echo
+        echo "####################"
+        echo "Important:"
+        echo "Select label type: dos"
+        echo "Create the following new partions:"
+        echo "/dev/vda1 - for swap"
+        echo "/dev/vda2 - for root"
+        echo "####################"
+        echo "Click any key; ctrl-c is abort"
+        echo "####################"
+        read -n1 -p">"; echo
+
+        cfdisk
+        lsblk
+        echo
+        echo "####################"
+        echo "Click any key; ctrl-c is abort"
+        echo "####################"
+        read -n1 -p">"; echo
+
+        mkswap /dev/vda1
+        mkfs.ext4 /dev/vda2
+
+        mount /dev/vda2 /mnt
+        swapon /dev/vda1
+    else
+        echo
+        echo "####################"
+        echo "Important:"
+        echo "Select label type: dos"
+        echo "/mnt          - for root"
+        echo "####################"
+        echo "1 - cfdisk, fdisk                                - partitions manager"
+        echo "2 - lsblk or lsblk -fs                           - show partitions"
+        echo "3 - mkfs.ext4 /dev/sdX                           - for format"
+        echo "4 - mount /dev/sdX /mnt                          - for mount"
+        echo "5 - mkswap /dev/sdY; swapon /dev/sdY             - for swap"
+        echo "####################"
+        echo "after in shell do: # exit"
+        echo "####################"
+        bash
+    fi
+fi
+
+echo
+echo "####################"
+echo "Click any key; ctrl-c is abort"
+echo "####################"
+read -n1 -p">"; echo
+
+
+# Install base packages
+
+# grub
+while [[ $grub != "1" ]] && [[ $grub != "2" ]]; do
+    echo "####################"
+    echo "Install grub:"
+    echo "1) yes"
+    echo "2) no"
+    echo "####################"
+    read -n1 -p">" grub
+done
+echo; echo
+if [[ $grub == "1" ]]; then
+    if [[ $table == "UEFI" ]]; then
+        grub="grub os-prober efibootmgr grub-theme-vimix"
+    else
+        grub="grub os-prober grub-theme-vimix"
+    fi
+else
+    grub=""
+fi
+
+# kernel
+while [[ $kernel != "1" ]] && [[ $kernel != "2" ]] && [[ $kernel != "3" ]] && [[ $kernel != "4" ]]; do
+    echo "####################"
+    echo "Install what kernel:"
+    echo "1) linux           - Vanilla Linux kernel"
+    echo "2) linux-lts       - LTS Linux kernel"
+    echo "3) linux-zen       - Zen Linux kernel"
+    echo "4) linux-hardened  - Security-focused Linux kernel"
+    echo "####################"
+    read -n1 -p">" kernel
+done
+echo; echo
+if [[ $kernel == "1" ]]; then
+    kernel="linux"
+elif [[ $kernel == "2" ]]; then
+    kernel="linux-lts"
+elif [[ $kernel == "3" ]]; then
+    kernel="linux-zen"
+elif [[ $kernel == "4" ]]; then
+    kernel="linux-hardened"
+else
+    kernel=""
+fi
+
+
+packages="archlinux-keyring base base-devel $kernel linux-firmware $grub networkmanager nano curl"
+pacstrap /mnt $packages
+
+
+# Generate /etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
+echo; echo
+cat /mnt/etc/fstab
+
+echo
+echo "####################"
+echo "Click any key; ctrl-c is abort"
+echo "####################"
+read -n1 -p">"; echo
+
+# Copy script for chroot mode
+cp -r /root/archlinux /mnt/root
+
+echo
+if [[ "$grub" == "grub os-prober" ]] && [[ $am == "2" ]]; then
+    echo "####################"
+    echo "In chroot mode do:"
+    echo ">/root/archlinux/chroot /dev/sdX"
+    echo "where /dev/sdX - disk for install grub"
+    echo "####################"
+else
+    echo "####################"
+    echo "In chroot mode do:"
+    echo ">/root/archlinux/chroot"
+    echo "####################"
+fi
+
+# Run arch-chroot
+
+arch-chroot /mnt
+
+# Clean
+rm -rf /mnt/root/archlinux
+umount -R /mnt
+
+echo; echo
+echo "####################"
+echo "Please do this:"
+echo ">poweroff   or   >reboot"
+echo "Disable flash or disk"
+echo "####################"
+echo
+echo "####################"
+echo "After reboot run your user and"
+echo "Please do this:"
+echo ">cd ~/archlinux && ./packages"
+echo "####################"
+echo "####################"
+echo
+
