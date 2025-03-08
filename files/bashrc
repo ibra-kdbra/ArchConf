@@ -1,0 +1,65 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anuthing
+[[ $- != *i* ]] && return
+
+# PS1='[\u@\h \W]\$ '
+
+
+# show git branch|status
+get_git_branch () {
+  if git status &>/dev/null && which git &>/dev/null; then
+    local gbranch=`git rev-parse --abbrev-ref HEAD`
+
+    local RED='\033[0;31m'
+    local GREEN='\033[0;32m'
+    local NC='\033[0m' # No Color
+
+    if [[ `git status --short` == '' ]]; then
+      local gstatus="$GREEN\u2714"
+    else
+      local gstatus="$RED\u2718"
+    fi
+
+    echo -e ": $gstatus $gbranch"
+  fi
+}
+PS1="[\[\033[01;33m\]\u\[\033[1;34m\]@\[\033[01;32m\]\h: \[\033[01;34m\]\w\[\033[0;36m\]\$(get_git_branch)\[\033[00m\]]\\$ "
+
+
+# linux command aliases
+alias ls='ls --color=auto'
+alias ll="ls -lahv --group-directories-first"
+alias grep='grep --color=auto'
+alias cp="cp -av"
+alias mv="mv -v"
+alias rm="rm -v"
+
+# alias for conda
+# alias conda.update="conda update --all --yes"
+
+# alias for create/activate python virtual envorenment
+venv() {
+    if test -e .venv; then
+        source .venv/bin/activate
+    else
+        python -m venv .venv && source .venv/bin/activate
+        pip install --upgrade pip
+    fi
+}
+
+# ranger auto cd
+rcd() {
+    temp_file="$(mktemp -t "ranger_cd.XXXXXXXXXX")"
+    ranger --choosedir="$temp_file" -- "${@:-$PWD}"
+    if chosen_dir="$(cat -- "$temp_file")" && [ -n "$chosen_dir" ] && [ "$chosen_dir" != "$PWD" ]; then
+        cd -- "$chosen_dir"
+    fi
+    rm -f -- "$temp_file"
+}
+
+# save current directory (it is necessary for tiling managers like i3, qtile)
+export PROMPT_COMMAND="pwd > /tmp/whereami"
+
