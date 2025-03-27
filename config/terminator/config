@@ -1,0 +1,27 @@
+[global_config]
+  enabled_plugins = ,
+  suppress_multiple_term_dialog = True
+[keybindings]
+  close_term = <Primary><Shift>q
+  close_window = None
+  help = None
+[profiles]
+  [[default]]
+    background_color = "#1d1f21"
+    background_darkness = 0.95
+    background_type = transparent
+    font = Monospace 10
+    foreground_color = "#c5c8c6"
+    show_titlebar = False
+    scrollback_lines = 5000
+    use_system_font = False
+    bold_is_bright = True
+[layouts]
+  [[default]]
+    [[[window0]]]
+      parent = ""
+      type = Window
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+[plugins]
