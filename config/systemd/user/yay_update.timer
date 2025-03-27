@@ -1,0 +1,15 @@
+#
+# Timer for update packages
+#
+
+[Unit]
+Description=Update Arch packages with yay
+
+[Timer]
+OnCalendar=*-*-* *:0,30
+Persistent=true
+# AccuracySec=1us
+
+[Install]
+WantedBy=timers.target
+
