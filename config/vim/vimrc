@@ -1,0 +1,48 @@
+" Basic settings
+source ~/.config/vim/settings.vim
+
+" Key mappings
+source ~/.config/vim/mappings.vim
+
+" Terminal and Explorer
+source ~/.config/vim/explorers.vim
+
+" ----------------------------------------
+" ----------------------------------------
+" Plugins
+" ----------------------------------------
+
+" Vim-plug - plugin manager
+" ---------------
+" https://github.com/junegunn/vim-plug
+" Reload .vimrc and :PlugInstall to install plugins
+" --------------
+
+" Initialize plugin system
+call plug#begin()
+
+" ----------------------------------------
+
+" Main plugins
+source ~/.config/vim/pluggins.vim
+
+" Common IDE plugins
+" source ~/.config/vim/ide_main.vim
+
+" Vim IDE plugins
+" source ~/.config/vim/ide_vim.vim
+
+" ----------------------------------------
+
+" Initialize plugin system
+call plug#end()
+
+" ----------------------------------------
+" ----------------------------------------
+
+" Color scheme (via plugin)
+source ~/.config/vim/colors.vim
+
+" ----------------------------------------
+" ----------------------------------------
+
