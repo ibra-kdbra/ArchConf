@@ -1,0 +1,17 @@
+" ----------------------------------------
+" eVim - switch to normal mode: ctrl-l
+" ----------------------------------------
+
+" color scheme settings
+colorscheme PaperColor
+" window size
+set lines=45 columns=150
+
+" hide GUI
+set guioptions=
+
+" hide Toolbar
+" set guioptions-=T
+" hide Menu
+" set guioptions-=m
+
