@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+# Set the time zone
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+hwclock --systohc
+
+# Localization
+sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+sed -i 's/^#en_GB.UTF-8/en_GB.UTF-8/' /etc/locale.gen
+locale-gen
+
+echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
+echo "KEYMAP=uk" >> /etc/vconsole.conf
+echo "FONT=lat9w-16" >> /etc/vconsole.conf
+
+
+# Network configuration
+echo "archlinux" >> /etc/hostname
+
+# Move to `packages` 'Post config'
+# echo "127.0.0.1    localhost" >> /etc/hosts
+# echo "::1          localhost" >> /etc/hosts
+# echo "127.0.0.1    archlinux.localdomain  archlinux" >> /etc/hosts
+
+systemctl enable NetworkManager
+
+# Pacman settings - Move to `packages` 'Post config'
+# sed -i 's/#Color/Color/' /etc/pacman.conf
+# sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+
+# Add multilib repo
+line=`grep -n "#\[multilib\]" /etc/pacman.conf | cut -d':' -f1`
+sed -i -e "${line}s/^#//" /etc/pacman.conf
+line=$((line+1))
+sed -i -e "${line}s/^#//" /etc/pacman.conf
+
+# Passwords and create user
+echo; echo
+echo "####################"
+echo "Password for root"
+echo "####################"
+passwd
+
+echo; echo
+echo "####################"
+echo "Add user"
+echo "####################"
+read  -p"Username >" username
+useradd -m -G wheel -s /bin/bash $username
+passwd $username
+
+# Copy scripts
+# chmod -R 755 /home/$username
+cp -r /root/archlinux /home/$username
+chown -R $username:$username /home/$username/archlinux
+
+# Add sudo
+sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+
+# Add sudo timeout - Move to `packages` 'Post config'
+# line=`grep -n "Runas alias specification" /etc/sudoers | cut -d':' -f1`
+# sed -i "${line}aDefaults timestamp_timeout=30\n" /etc/sudoers
+
+echo; echo
+# Install GRUB
+grub=`pacman -Qe grub 2>/dev/null | grep -o "^grub"`
+efibootmgr=`pacman -Qe efibootmgr 2>/dev/null | grep -o "^efibootmgr"`
+
+if [[ $grub == "grub" ]]; then
+    if [[ $efibootmgr == "efibootmgr" ]]; then
+        grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+        sed -i '/^GRUB_TIMEOUT/s/=./=3/' /etc/default/grub
+        sed -i 's/#GRUB_THEME="\/path\/to\/gfxtheme"/GRUB_THEME="\/usr\/share\/grub\/themes\/Vimix\/theme.txt"/' /etc/default/grub
+        grub-mkconfig -o /boot/grub/grub.cfg
+        echo; echo
+        echo "####################"
+        echo "GRUB for EFI install"
+        echo "####################"
+    else
+        if [[ $1 != "" ]]; then
+            grub-install --target=i386-pc $1
+        else
+            grub-install --target=i386-pc /dev/vda
+        fi
+        sed -i '/^GRUB_TIMEOUT/s/=./=3/' /etc/default/grub
+        sed -i 's/#GRUB_THEME="\/path\/to\/gfxtheme"/GRUB_THEME="\/usr\/share\/grub\/themes\/Vimix\/theme.txt"/' /etc/default/grub
+        grub-mkconfig -o /boot/grub/grub.cfg
+        echo; echo
+        echo "####################"
+        echo "GRUB for MBR install"
+        echo "####################"
+    fi
+else
+    echo; echo
+    echo "####################"
+    echo "GRUB not install"
+    echo "####################"
+fi
+
+# Exit
+echo; echo
+echo "####################"
+echo "Please do this:"
+echo ">exit"
+echo "####################"
+
