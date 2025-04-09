@@ -1,0 +1,1045 @@
+#!/usr/bin/env bash
+
+echo; echo
+echo "####################"
+echo "Post config after archinstall"
+echo "####################"
+echo; echo
+
+# Localization
+echo "LANG=ru_RU.UTF-8" | sudo tee /etc/locale.conf
+echo "KEYMAP=ru" | sudo tee /etc/vconsole.conf
+echo "FONT=cyr-sun16" | sudo tee --append /etc/vconsole.conf
+
+# Network configuration
+echo "archlinux" | sudo tee /etc/hostname
+
+sudo sed -i '3,$d' /etc/hosts
+echo "127.0.0.1    localhost" | sudo tee --append /etc/hosts
+echo "::1          localhost" | sudo tee --append /etc/hosts
+echo "127.0.0.1    archlinux.localdomain  archlinux" | sudo tee --append /etc/hosts
+
+# Pacman settings
+sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+sudo sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+
+# Add sudo timeout
+line=`sudo grep -n "Runas alias specification" /etc/sudoers | cut -d':' -f1`
+sudo sed -i "${line}aDefaults timestamp_timeout=30\n" /etc/sudoers
+
+# Add microcode and curl for mirrors
+sudo pacman -S --needed --noconfirm intel-ucode amd-ucode
+sudo pacman -S --needed --noconfirm curl git
+
+# get filesystem type (btrfs|ext4)
+filesystem=`df -hT / | sed -n 2p | awk '{ print $2 }'`
+
+# Grub config
+if [[ `pacman -Qe grub 2>/dev/null` != '' ]]; then
+        sudo pacman -S --needed --noconfirm os-prober grub-theme-vimix
+        sudo sed -i '/^GRUB_TIMEOUT/s/=./=3/' /etc/default/grub
+        sudo sed -i 's/#GRUB_THEME="\/path\/to\/gfxtheme"/GRUB_THEME="\/usr\/share\/grub\/themes\/Vimix\/theme.txt"/' /etc/default/grub
+        # sudo sed -i 's/#GRUB_DISABLE_OS_PROBER/GRUB_DISABLE_OS_PROBER/' /etc/default/grub
+
+        if [[ "$filesystem" == "btrfs" ]]; then
+            sudo pacman -S --needed --noconfirm grub-btrfs inotify-tools
+        fi
+
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+fi
+
+echo; echo
+echo "####################"
+echo "Install packages"
+echo "####################"
+echo; echo
+
+# Select video drivers
+echo "####################"
+echo "What video drivers install?"
+echo "1) xf86-video-intel      -> for Intel"
+echo "2) xf86-video-amdgpu     -> for AMD"
+echo "3) xf86-video-nouveau    -> for nVidea"
+echo "4) xf86-video-ati        -> for ATI"
+echo "other) xf86-video-fbdev  -> other driver"
+echo "####################"
+
+read -n1 -p">" drivers; echo
+if [[ $drivers == "1" ]]; then
+    drivers="xf86-video-intel"
+elif [[ $drivers == "2" ]]; then
+    drivers="xf86-video-amdgpu"
+elif [[ $drivers == "3" ]]; then
+    drivers="xf86-video-nouveau"
+elif [[ $drivers == "4" ]]; then
+    drivers="xf86-video-ati"
+else
+    drivers="xf86-video-fbdev"
+fi
+
+# check kernel for install headers
+kernel=`pacman -Qe linux 2>/dev/null | grep -o "^linux"`
+kernel=`echo $kernel | sed -E 's/([a-z\-]+)/\1-headers/'`
+kernel_lts=`pacman -Qe linux-lts 2>/dev/null | grep -o "^linux-lts"`
+kernel_lts=`echo $kernel_lts | sed -E 's/([a-z\-]+)/\1-headers/'`
+kernel_zen=`pacman -Qe linux-zen 2>/dev/null | grep -o "^linux-zen"`
+kernel_zen=`echo $kernel_zen | sed -E 's/([a-z\-]+)/\1-headers/'`
+kernel_hardened=`pacman -Qe linux-hardened 2>/dev/null | grep -o "^linux-hardened"`
+kernel_hardened=`echo $kernel_hardened | sed -E 's/([a-z\-]+)/\1-headers/'`
+headers=`echo "$kernel $kernel_lts $kernel_zen $kernel_hardened"`
+
+###############
+
+# Select Desktop Environment
+while [[ $de != "1" ]] && [[ $de != "2" ]] && [[ $de != "3" ]] && [[ $de != "4" ]]\
+   && [[ $de != "5" ]] && [[ $de != "6" ]] && [[ $de != "7" ]] && [[ $de != "8" ]]\
+   && [[ $de != "9" ]] && [[ $de != "10" ]] && [[ $de != "11" ]]\
+   && [[ $de != "12" ]] && [[ $de != "13" ]] && [[ $de != "14" ]]; do
+    echo; echo
+    echo "####################"
+    echo "What Desktop Environment install?"
+    echo "1) Qtile, i3wm, Openbox: WM settings by Koljasha"
+    echo "2) Xfce default settings"
+    echo "3) Lxde default settings"
+    echo "4) Lxqt default settings"
+    echo "5) Enlightenment default settings"
+    echo "6) Mate default settings"
+    echo "7) Cinnamon default settings"
+    echo "8) Gnome default settings"
+    echo "9) Budgie default settings"
+    echo "10) Pantheon default settings"
+    echo "11) Kde Plasma default settings"
+    echo "12) Deepin default settings"
+    echo "####################"
+    read -p">" de
+done
+echo; echo
+
+if [[ $de == "1" ]]; then
+    de="koljasha_wm"
+elif [[ $de == "2" ]]; then
+    de="xfce"
+elif [[ $de == "3" ]]; then
+    de="lxde"
+elif [[ $de == "4" ]]; then
+    de="lxqt"
+elif [[ $de == "5" ]]; then
+    de="efl"
+elif [[ $de == "6" ]]; then
+    de="mate"
+elif [[ $de == "7" ]]; then
+    de="cinnamon"
+elif [[ $de == "8" ]]; then
+    de="gnome"
+elif [[ $de == "9" ]]; then
+    de="budgie"
+elif [[ $de == "10" ]]; then
+    de="pantheon"
+elif [[ $de == "11" ]]; then
+    de="kde"
+elif [[ $de == "12" ]]; then
+    de="deepin"
+fi
+echo "Ok"
+
+###############
+
+# Packages
+
+packages="
+$drivers $headers reflector pkgfile man-db man-pages tldr arch-install-scripts cmake
+android-tools dosfstools mtools net-tools xdg-user-dirs ntfs-3g gvfs gvfs-mtp gvfs-smb
+wmctrl brightnessctl xclip xdotool xbindkeys bash-completion lesspipe ctags
+cryptsetup upower udisks2 smartmontools dmidecode btrfs-progs earlyoom timeshift
+git pass pwgen trash-cli numlockx wget curl httpie
+fzf fd ripgrep jq tree highlight bat bat-extras git-delta ncdu
+neofetch htop inxi cmatrix lm_sensors lsof strace
+atool p7zip unrar unzip zip
+openssh freerdp freerdp2 rsync gufw
+openvpn networkmanager-openvpn wireguard-tools systemd-resolvconf sshuttle
+xorg xorg-xinit accountsservice
+pipewire wireplumber pipewire-alsa pipewire-pulse
+vim fish tmux screen
+imagemagick ffmpeg ghostscript
+python-pip python-setuptools
+gsfonts ttf-droid ttf-dejavu ttf-liberation awesome-terminal-fonts ttf-nerd-fonts-symbols
+xcursor-vanilla-dmz xcursor-vanilla-dmz-aa
+arc-gtk-theme adapta-gtk-theme breeze-gtk
+arc-icon-theme breeze-icons
+archlinux-wallpaper
+firefox
+xdg-desktop-portal-gtk flatpak
+"
+
+if [[ $de == "koljasha_wm" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol network-manager-applet transmission-gtk
+    qt5ct qt6ct kvantum-qt5 kvantum qt5-wayland qt6-wayland
+
+    qtile i3 openbox polybar plank
+    obconf menumaker
+    wlroots wl-clipboard python-pywlroots python-pyxdg python-dbus-next
+    bluez blueman bluez-utils
+    polkit-gnome lxappearance-gtk3 obsidian-icon-theme picom
+    terminator alacritty
+    feh ffmpegthumbnailer ranger ueberzug
+    dmenu rofi jgmenu i3lock dunst clipmenu
+    gvim gsimplecal
+    neovim python-pynvim nodejs npm pyright bash-language-server
+    maim grim slurp swappy
+    qutebrowser python-requests python-beautifulsoup4
+    pcmanfm-gtk3
+    file-roller gnome-calculator gnome-terminal
+    remmina samba x11vnc
+    vlc
+    "
+elif [[ $de == "xfce" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol network-manager-applet transmission-gtk
+    qt5ct qt6ct kvantum
+
+    xfce4 xfce4-goodies
+    galculator engrampa gst-libav
+    "
+elif [[ $de == "lxde" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol network-manager-applet transmission-gtk
+    qt5ct qt6ct kvantum
+
+    lxde-gtk3 obconf picom
+    l3afpad galculator gnome-screenshot xarchiver gpicview mpv
+    "
+elif [[ $de == "lxqt" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted network-manager-applet
+    qt5ct qt6ct kvantum
+
+    lxqt picom xsettingsd
+    transmission-qt featherpad galculator vlc
+    "
+elif [[ $de == "efl" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol transmission-gtk
+    qt5ct qt6ct kvantum
+
+    enlightenment terminology connman
+    l3afpad galculator xarchiver gpicview mpv
+    "
+elif [[ $de == "mate" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol network-manager-applet transmission-gtk
+    qt5ct qt6ct kvantum
+
+    mate mate-extra celluloid
+    "
+elif [[ $de == "cinnamon" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    gparted pavucontrol network-manager-applet transmission-gtk
+    qt5ct qt6ct kvantum
+
+    cinnamon cinnamon-translations x-apps
+    gnome-terminal gnome-calculator gnome-screenshot file-roller gthumb celluloid
+    "
+elif [[ $de == "gnome" ]]; then
+    packages="
+    $packages
+    gnome gnome-extra
+    "
+elif [[ $de == "budgie" ]]; then
+    packages="
+    $packages
+    budgie-desktop budgie-desktop-view budgie-screensaver
+    gnome network-manager-applet
+    "
+elif [[ $de == "pantheon" ]]; then
+    packages="
+    $packages
+    pantheon gdm
+    "
+elif [[ $de == "kde" ]]; then
+    packages="
+    $packages
+    plasma plasma-wayland-session kde-applications
+    "
+elif [[ $de == "deepin" ]]; then
+    packages="
+    $packages
+    lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
+    deepin deepin-extra
+    "
+fi
+
+# Other packages:
+
+# mint-x-icons - тема значков Linux Mint
+
+# wine|wine-staging winetricks - for windows applications
+# drivers & libs: https://github.com/lutris/docs/blob/master/InstallingDrivers.md
+# for pipewire: lib32-pipewire
+#
+# yay -S wine-staging winetricks lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader lib32-pipewire
+#
+# bottles - bottles for windows applications
+# lutris gamemode lib32-gamemode - frontend for windows games
+
+# gnome-boxes - virtual machines
+# virtualbox - virtual machines
+# (choose virtualbox-host-modules-arch for linux kernel)
+# (choose virtualbox-host-dkms for linux-lts, linux-zen, linux-hardened kernel)
+
+# sublime-text-4 - text editor
+
+# onlyoffice-bin - office
+# libreoffice-still libreoffice-still-ru - office
+
+# xreader, atril - simple document viewer
+# xournalpp - document viewer with notes
+
+# rustdesk-bin - remote desktop software
+# scrcpy - connect to remote Android device
+
+# mintstick - write Iso to Usb
+# ventoy-bin - write multiple Iso to Usb
+
+# os-prober-btrfs - Grub find system on other btrfs disks
+
+# spoofdpi-bin - anti-censorship tool
+
+# firejail - запуск приложения в песочнице
+# distrobox docker|podman - разные дистрибутивы через контейнеры
+
+# openvpn3 - new version OpenVpn
+
+#
+# additionally I use flatpak apps:
+# flatpak install flathub io.github.flattool.Warehouse
+# flatpak install flathub com.github.tchx84.Flatseal
+#
+
+packages_aur="
+xkb-switch
+"
+
+if [[ $de == "koljasha_wm" ]]; then
+    packages_aur="
+    $packages_aur
+    arc-dark-osx-openbox-theme-git
+    openvpn-update-systemd-resolved
+    "
+fi
+
+###############
+
+# change|check folder
+cd ~/archlinux
+
+# Update mirrorlist (global is slowly)
+# sudo curl -o /etc/pacman.d/mirrorlist https://archlinux.org/mirrorlist/all/
+# sudo sed -i '7s/#Server/Server/' /etc/pacman.d/mirrorlist
+sudo cp files/pacman/mirrorlist /etc/pacman.d/mirrorlist
+
+# Install packages from repo
+sudo pacman -Syu --noconfirm
+sudo pacman -S --needed --noconfirm $packages
+
+if [[ $(echo $?) != 0 ]]; then
+    echo
+    echo "Error Installation"
+    echo "Try to run the ./packages with the same parameters again now"
+    echo
+    exit 2
+fi
+
+# build yay
+git clone https://aur.archlinux.org/yay-bin.git
+cd yay-bin && makepkg -sirc --noconfirm
+cd .. && rm -rf yay-bin
+
+# Install packages from aur
+yay -S --noconfirm $packages_aur
+
+###############
+
+# now error when start lxappearance -> del this app
+if [[ $de == "lxde" ]]; then
+    sudo pacman -Rsn --noconfirm lxappearance-obconf-gtk3
+fi
+
+###############
+echo
+echo "####################"
+echo "Click any key; ctrl-c is abort"
+echo "####################"
+read -n1 -p">"; echo
+###############
+
+username=`whoami`
+
+###############
+
+# Copy configs
+
+cp files/profile ~/.profile
+cp files/bashrc ~/.bashrc
+cp files/gitconfig ~/.gitconfig
+
+mkdir ~/.ssh
+cp files/ssh_config ~/.ssh/config
+mkdir ~/.gnupg
+cp files/gpg.conf ~/.gnupg/gpg.conf
+
+mkdir -p ~/.config
+mkdir -p ~/.local/share/applications
+
+if [[ $de == "koljasha_wm" ]]; then
+    # ~/.config
+    cp -r config/* ~/.config/
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+
+    # config services
+    sudo cp files/sudo/sudo_openvpn /etc/sudoers.d/openvpn
+    sudo cp files/sudo/sudo_pacman /etc/sudoers.d/pacman
+    sudo cp files/sudo/sudo_wireguard /etc/sudoers.d/wireguard
+    sudo sed -i "s/username/${username}/" /etc/sudoers.d/openvpn
+    sudo sed -i "s/username/${username}/" /etc/sudoers.d/pacman
+    sudo sed -i "s/username/${username}/" /etc/sudoers.d/wireguard
+
+    sudo cp files/smb.conf /etc/samba/smb.conf
+
+    sudo mkdir /etc/systemd/system/x11vnc.service.d
+    sudo cp files/x11vnc.conf /etc/systemd/system/x11vnc.service.d/override.conf
+
+    # polkit rules for udisks2
+    sudo cp files/rules.d/55-arch.rules /etc/polkit-1/rules.d/55-arch.rules
+
+    # copy desktop icons
+    sudo cp files/badge/i3_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/i3_badge-symbolic.svg
+    sudo cp files/badge/openbox_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/openbox_badge-symbolic.svg
+    sudo cp files/badge/qtile_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/qtile_badge-symbolic.svg
+    sudo cp files/badge/qtile-wayland_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/qtile-wayland_badge-symbolic.svg
+    sudo gtk-update-icon-cache /usr/share/icons/hicolor
+
+    # gnome-screenshot settings
+    # gsettings set org.gnome.gnome-screenshot auto-save-directory "file:///home/$username/Загрузки/"
+
+    # backgrounds
+    sudo rm /usr/share/backgrounds/archlinux/archlinux.stw
+    sudo rm /usr/share/backgrounds/archlinux/archbtw.png
+
+    # jgmenu Exit for user
+    sed -i "s/username/$username/" ~/.config/jgmenu/append.csv
+
+    # terminator for plank
+    sed -i "s/username/$username/" ~/.config/plank/dock1/launchers/terminator.dockitem
+
+    # /usr/local/bin
+    sudo cp files/apps/terminator /usr/local/bin/terminator
+    sudo cp files/apps/feh /usr/local/bin/feh
+
+    # applications
+    cp files/apps/terminator.desktop ~/.local/share/applications/
+    cp files/apps/feh.desktop ~/.local/share/applications/
+    cp files/apps/ranger.desktop ~/.local/share/applications/
+
+    # mime cache
+    cp files/apps/mimeinfo.cache ~/.local/share/applications/
+
+    # ranger icons
+    git clone https://github.com/cdump/ranger-devicons2 ~/.config/ranger/plugins/devicons2
+
+    # tmux pluggins manager
+    git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+    ~/.config/tmux/plugins/tpm/bin/install_plugins
+
+    # clipmenu enable
+    sudo sed -i 's/set -- -dmenu/set -- -dmenu -i -p Clipboard/' /usr/bin/clipmenu
+    systemctl --user enable clipmenud.service
+
+    # distrobox Resolve Error
+    cp files/distroboxrc ~/.distroboxrc
+
+    # menu_maker for Openbox
+    ~/.config/openbox/menu_maker.sh
+elif [[ $de == "xfce" ]]; then
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "lxde" ]]; then
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # enable picom autostart
+    sudo cp /usr/share/applications/picom.desktop /etc/xdg/autostart/picom.desktop
+
+    # delete openbox session from display manager
+    sudo mv /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox.desktop.hide
+    sudo mv /usr/share/xsessions/openbox-kde.desktop /usr/share/xsessions/openbox-kde.desktop.hide
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "lxqt" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # QT Environment
+    mkdir ~/.config/lxqt
+    cp files/lxqt_session.conf ~/.config/lxqt/session.conf
+
+    # enable picom autostart
+    sudo cp /usr/share/applications/picom.desktop /etc/xdg/autostart/picom.desktop
+
+    # copy desktop icons
+    sudo cp files/badge/lxqt_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/lxqt_badge-symbolic.svg
+    sudo gtk-update-icon-cache /usr/share/icons/hicolor
+
+    # delete openbox session from display manager
+    sudo mv /usr/share/xsessions/openbox.desktop /usr/share/xsessions/openbox.desktop.hide
+    sudo mv /usr/share/xsessions/openbox-kde.desktop /usr/share/xsessions/openbox-kde.desktop.hide
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "efl" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "mate" ]]; then
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "cinnamon" ]]; then
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/qt5ct ~/.config/qt5ct
+    cp -r config/qt6ct ~/.config/qt6ct
+
+    cp -r config/htop ~/.config/htop
+
+    # copy desktop icons
+    sudo cp files/badge/cinnamon_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/cinnamon_badge-symbolic.svg
+    sudo cp files/badge/cinnamon_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/cinnamon2d_badge-symbolic.svg
+    sudo gtk-update-icon-cache /usr/share/icons/hicolor
+
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+elif [[ $de == "gnome" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/htop ~/.config/htop
+elif [[ $de == "budgie" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/htop ~/.config/htop
+elif [[ $de == "pantheon" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/htop ~/.config/htop
+elif [[ $de == "kde" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/htop ~/.config/htop
+
+    # config sddm
+    sudo mkdir /etc/sddm.conf.d
+    sudo cp files/sddm_avatar.conf /etc/sddm.conf.d/avatar.conf
+    sudo cp files/images/username.png /var/lib/AccountsService/icons/${username}
+elif [[ $de == "deepin" ]]; then
+    rm ~/.profile
+
+    # ~/.config
+    cp -r config/fish ~/.config/fish
+    cp -r config/vim ~/.config/vim
+
+    cp -r config/htop ~/.config/htop
+
+    # copy desktop icons
+    sudo cp files/badge/deepin_badge-symbolic.svg /usr/share/icons/hicolor/scalable/places/deepin_badge-symbolic.svg
+    sudo gtk-update-icon-cache /usr/share/icons/hicolor
+
+    # enable lightdm-gtk-greeter
+    sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-gtk-greeter/' /etc/lightdm/lightdm.conf
+    # config lightdm
+    sudo cp files/lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+    # enable numlockx in lightdm
+    sudo sed -i 's/#greeter-setup-script=/greeter-setup-script=\/usr\/bin\/numlockx on/' /etc/lightdm/lightdm.conf
+fi
+
+###############
+
+# copy image for lightdm & i3lock
+sudo cp files/images/archlinux.png /usr/share/backgrounds/archlinux.png
+
+# icon for user
+sudo cp files/images/username.png /var/lib/AccountsService/icons/${username}.png
+sudo cp files/username /var/lib/AccountsService/users/${username}
+sudo sed -i "s/username/${username}/" /var/lib/AccountsService/users/${username}
+
+# makepkg settings
+sudo sed -i 's/#MAKEFLAGS/MAKEFLAGS/' /etc/makepkg.conf
+
+# timeoutstop in systemd
+sudo sed -i 's/#DefaultTimeoutStopSec=.*/DefaultTimeoutStopSec=10s/' /etc/systemd/system.conf
+
+# systemd journal size
+# sudo sed -i 's/#SystemMaxUse=/SystemMaxUse=512M/' /etc/systemd/journald.conf
+
+# enable change locale
+sudo localectl --no-convert set-x11-keymap us,gb "" "" grp:alt_shift_toggle
+
+
+###############
+
+# Vim
+ln -s ~/.config/vim/vimrc ~/.vimrc
+# install Vim-plug
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# install vim spell RU UTF-8
+# curl -fLo ~/.vim/spell/ru.utf-8.sug --create-dirs http://ftp.vim.org/vim/runtime/spell/ru.utf-8.sug
+# curl -fLo ~/.vim/spell/ru.utf-8.spl --create-dirs http://ftp.vim.org/vim/runtime/spell/ru.utf-8.spl
+echo; echo
+echo "####################"
+echo "After install Vim plugins"
+echo "for exit Vim do :qa"
+echo "####################"
+echo "now click any key"
+echo "####################"
+read -n1 -p">"; echo
+# install vim plugins
+vim -c PlugInstall
+echo; echo
+# enable vim colorscheme
+sed -i 's/desert/PaperColor/' ~/.config/vim/colors.vim
+
+# NeoVim
+if [[ $de == "koljasha_wm" ]]; then
+    # install Vim-plug
+    curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    # install nvim plugins
+    nvim -c PlugInstall
+fi
+
+# Gvim
+if [[ $de == "koljasha_wm" ]]; then
+    ln -s ~/.config/vim/gvimrc ~/.gvimrc
+
+    sudo cp /usr/share/applications/gvim.desktop /usr/share/applications/evim.desktop
+    sudo sed -i "s/GVim/eVim/" /usr/share/applications/evim.desktop
+    sudo sed -i "s/gvim -f/gvim -y -f/" /usr/share/applications/evim.desktop
+fi
+
+# vim for vi
+sudo ln -s /usr/bin/vim /usr/bin/vi
+
+###############
+
+# install oh-my-fish
+git clone https://github.com/oh-my-fish/oh-my-fish
+oh-my-fish/bin/install --noninteractive --offline
+# install theme for fish
+fish -c 'omf install agnoster'
+# install fzf plugins
+fish -c 'omf install fzf'
+fish -c 'set -U FZF_LEGACY_KEYBINDINGS 0; set -U FZF_PREVIEW_DIR_CMD "ls -lah"; set -U FZF_PREVIEW_FILE_CMD "head -n 20"; set -U FZF_COMPLETE 2'
+cp files/fish/fzf.fish ~/.local/share/omf/pkg/fzf/conf.d/fzf.fish
+cp files/fish/fzf_complete.fish ~/.local/share/omf/pkg/fzf/functions/__fzf_complete.fish
+cp files/fish/fzf_complete_preview.fish ~/.local/share/omf/pkg/fzf/functions/__fzf_complete_preview.fish
+# clean oh-my-fish
+rm -rf ~/archlinux/oh-my-fish
+# exit status in fish agnoster theme
+sed -i 's/✘/✘ $RETVAL'/ ~/.local/share/omf/themes/agnoster/functions/fish_prompt.fish
+# fish is main shell
+sudo chsh -s /usr/bin/fish $username
+# fish editor
+fish -c 'set -U EDITOR vim'
+# vi mode
+fish -c 'fish_vi_key_bindings'
+# update fish
+fish -c 'fish_update_completions'
+
+# [Key bindings for command-line](https://github.com/junegunn/fzf?ysclid=lqj7hv2gh7236490784#key-bindings-for-command-line)
+# CTRL-T - Paste the selected files and directories onto the command-line
+# CTRL-R - Paste the selected command from history onto the command-line
+# ALT-C - cd into the selected directory
+
+###############
+
+# # install miniconda
+# while [[ $mconda != "1" ]] && [[ $mconda != "2" ]]; do
+    # echo; echo
+    # echo "####################"
+    # echo "Install miniconda"
+    # echo "1) yes"
+    # echo "2) no"
+    # echo "####################"
+    # read -n1 -p">" mconda
+# done
+# echo; echo
+
+# if [[ $mconda == "1" ]]; then
+    # curl -o miniconda https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    # bash miniconda -p ~/.local/conda -b 2>/dev/null
+    # ~/.local/conda/bin/conda update --all --yes
+
+    # sed -i "s/# alias conda.update/alias conda.update/" ~/.bashrc
+    # cp files/fish/conda.update.fish ~/.config/fish/functions/conda.update.fish
+
+    # echo "set PATH /home/$username/.local/conda/bin \$PATH" >> ~/.config/fish/config.fish
+    # echo "" >> ~/.config/fish/config.fish
+
+    # rm miniconda
+# fi
+# echo "Ok"
+
+###############
+
+# Enable services
+
+###############
+
+# system clock synchronized
+sudo timedatectl set-ntp true
+
+# out-of-memory killer
+sudo systemctl enable earlyoom.service
+# sudo systemctl enable systemd-oomd.service
+
+# upowerd
+sudo systemctl enable upower.service
+
+# udisksd
+sudo systemctl enable udisks2.service
+
+# pkgfile database update
+sudo systemctl enable pkgfile-update.timer
+sudo systemctl start pkgfile-update.service
+
+# fstrim for ssd
+sudo systemctl enable fstrim.timer
+
+# login manager
+if [[ $de == "koljasha_wm" ]] \
+|| [[ $de == "xfce" ]] || [[ $de == "lxde" ]] || [[ $de == "lxqt" ]] \
+|| [[ $de == "mate" ]] || [[ $de == "cinnamon" ]] || [[ $de == "deepin" ]]; then
+    sudo systemctl enable lightdm.service
+elif [[ $de == "efl" ]]; then
+    sudo systemctl enable lightdm.service
+    sudo systemctl disable NetworkManager.service
+    sudo systemctl enable connman.service
+elif [[ $de == "gnome" ]] || [[ $de == "budgie" ]] || [[ $de == "pantheon" ]]; then
+    sudo systemctl enable gdm.service
+elif [[ $de == "kde" ]]; then
+    sudo systemctl enable sddm.service
+fi
+
+# pacman-mirrorlist settings
+while [[ $mlist != "1" ]] && [[ $mlist != "2" ]]; do
+    echo; echo
+    echo "####################"
+    echo "What pacman-mirrorlist use"
+    echo "1) global file pacman mirrorlist"
+    echo "2) reflector for update"
+    echo "####################"
+    read -n1 -p">" mlist
+done
+echo; echo
+
+if [[ $mlist == "1" ]]; then
+    true
+else
+    sudo systemctl enable reflector.timer
+fi
+echo "Ok"
+
+
+if [[ $de == "koljasha_wm" ]]; then
+    # Update Arch packages with yay
+    systemctl --user enable yay_update.timer
+
+    # services for Timeshift - Cron
+    sudo systemctl enable cronie.service
+
+    # services for Timeshift - Grub-Btrfs
+    if [[ "$filesystem" == "btrfs" ]]; then
+        sudo cp /usr/lib/systemd/system/grub-btrfsd.service /etc/systemd/system/grub-btrfsd.service
+        sudo sed -i -E '/ExecStart/s/(btrfsd --syslog).*/\1 --timeshift-auto/' /etc/systemd/system/grub-btrfsd.service
+        sudo systemctl enable grub-btrfsd
+    fi
+
+    # service Dns resolve for OpenVpn
+    # https://wiki.archlinux.org/title/OpenVPN#The_update-systemd-resolved_custom_script
+    sudo systemctl enable systemd-resolved.service
+fi
+
+###############
+
+if [[ $de == "koljasha_wm" ]]; then
+    # enable change backgrounds
+    while [[ $chbg != "1" ]] && [[ $chbg != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Enable change backgrounds"
+        echo "1) yes"
+        echo "2) no"
+        echo "####################"
+        read -n1 -p">" chbg
+    done
+    echo; echo
+
+    if [[ $chbg == "1" ]]; then
+        systemctl --user enable setbg.timer
+    fi
+    echo "Ok"
+
+    ###############
+
+    # enable ufw firewall
+    while [[ $ufw != "1" ]] && [[ $ufw != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Enable Firewall by default "
+        echo "1) yes"
+        echo "2) no"
+        echo "####################"
+        read -n1 -p">" ufw
+    done
+    echo; echo
+
+    if [[ $ufw == "1" ]]; then
+        sudo ufw enable
+        sudo systemctl enable ufw.service
+    fi
+    echo "Ok"
+
+    ###############
+
+    # enable bluetooth
+    while [[ $blue != "1" ]] && [[ $blue != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Enable Bluetooth"
+        echo "1) yes"
+        echo "2) no"
+        echo "####################"
+        read -n1 -p">" blue
+    done
+    echo; echo
+
+    if [[ $blue == "1" ]]; then
+        sudo systemctl enable bluetooth.service
+    fi
+    echo "Ok"
+
+    ###############
+
+    # enable x11vnc server
+    while [[ $vnc != "1" ]] && [[ $vnc != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Enable X11VNC Server"
+        echo "1) yes"
+        echo "2) no"
+        echo "####################"
+        read -n1 -p">" vnc
+    done
+    echo; echo
+
+    if [[ $vnc == "1" ]]; then
+        sudo systemctl enable x11vnc.service
+    fi
+    echo "Ok"
+
+    ###############
+
+    # enable samba share for user
+    while [[ $smb != "1" ]] && [[ $smb != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Enable Samba share \"Home directory\" for $username"
+        echo "1) yes"
+        echo "2) no"
+        echo "####################"
+        read -n1 -p">" smb
+    done
+    echo; echo
+
+    if [[ $smb == "1" ]]; then
+        echo "Password Samba share for $username"
+        sudo smbpasswd -a $username
+        sudo systemctl enable smb.service
+    fi
+    echo "Ok"
+
+    ###############
+
+    # picom disable for Virtual machines
+    while [[ $vvsync != "1" ]] && [[ $vvsync != "2" ]]; do
+        echo; echo
+        echo "####################"
+        echo "Disable Picom (required to work on a virtual machine)"
+        echo "1) no"
+        echo "2) yes"
+        echo "####################"
+        read -n1 -p">" vvsync
+    done
+    echo; echo
+
+    if [[ $vvsync == "2" ]]; then
+        sed -i 's/picom/# picom/' ~/.config/qtile/autostart.sh
+        sed -i 's/picom/# picom/' ~/.config/i3/autostart.sh
+        sed -i 's/picom/# picom/' ~/.config/openbox/autostart.sh
+    fi
+    echo "Ok"
+
+    ###############
+
+    # # enable hibernate
+    # while [[ $hbr != "1" ]] && [[ $hbr != "2" ]]; do
+        # echo; echo
+        # echo "####################"
+        # echo "Enable Hibernate"
+        # echo "1) yes"
+        # echo "2) no"
+        # echo
+        # echo "Warning! Read https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate"
+        # echo "  -  need a created swap partition or a swap file"
+        # echo "  -  the script will automatically create a resume hook"
+        # echo "  -  you must manually specify resume=swap_partition in GRUB_CMDLINE_LINUX_DEFAULT"
+        # echo "####################"
+        # read -n1 -p">" hbr
+    # done
+    # echo; echo
+
+    # if [[ $hbr == "1" ]]; then
+        # sudo sed -i -e '/^HOOKS=/s/udev/udev resume/' /etc/mkinitcpio.conf
+        # sudo mkinitcpio -P
+    # else
+        # sed -i '/Hibernate/d' ~/.config/jgmenu/append.csv
+        # sed -i -e 's/l 5/l 4/' -e '/Hibernate/d' -e '/hibernate/,+1d' ~/.config/scripts/power.sh
+    # fi
+    # echo "Ok"
+
+    # sed -i '/Hibernate/d' ~/.config/jgmenu/append.csv
+    # sed -i -e 's/l 5/l 4/' -e '/Hibernate/d' -e '/hibernate/,+1d' ~/.config/scripts/power.sh
+
+    ###############
+fi
+
+###############
+
+# fix Setfont: KDFONTOP: Function not implemented on startup
+sudo sed -i -e '/^BINARIES=/s/()/(setfont)/' /etc/mkinitcpio.conf
+sudo mkinitcpio -P
+
+###############
+
+# end update settings
+
+###############
+
+# clean yay
+yay -Yc --noconfirm
+
+###############
+
+echo; echo
+echo "####################"
+echo "System installed. Will be reboot"
+echo
+echo "if need create swapfile:"
+echo "run ./swapfile after reboot"
+echo "####################"
+echo "now click any key"
+echo "####################"
+read -n1 -p">"; echo
+
+sudo systemctl -i reboot
+
+###############
+
