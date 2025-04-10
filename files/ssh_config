@@ -1,0 +1,21 @@
+# Host __name__
+  # User __username__
+  # Hostname __hostname__
+  # IdentityFile ~/.ssh/__key__
+
+# Github.com
+Host github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/git_rsa
+
+# Bitbucket.org
+Host bitbucket.org
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/git_rsa
+  # HostkeyAlgorithms +ssh-rsa
+  # PubkeyAcceptedAlgorithms +ssh-rsa
+
+# GitLab.com
+Host gitlab.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/git_rsa

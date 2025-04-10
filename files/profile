@@ -1,0 +1,35 @@
+#
+# other configs
+#
+
+export LANG=en_US.UTF8
+
+# editor as vim
+export EDITOR=vim
+
+# environment for QT applications
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_QPA_PLATFORMTHEME="qt6ct"
+
+# environment for gtk-4
+export GTK_THEME=Arc-Dark
+
+# environment for clipmenu
+export CM_LAUNCHER=rofi
+
+# environment for distrobox
+export TERMINAL=terminator
+
+# environment for Wayland
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
+    # keyboard layout
+    export XKB_DEFAULT_LAYOUT=us,ru
+    export XKB_DEFAULT_OPTIONS=grp:alt_shift_toggle
+
+    # firefox
+    export MOZ_ENABLE_WAYLAND=1
+
+    # qt apps
+    export QT_QPA_PLATFORM=wayland
+fi
+
