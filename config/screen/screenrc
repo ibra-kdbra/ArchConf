@@ -1,0 +1,24 @@
+# https://wiki.archlinux.org/title/GNU_Screen
+
+# prefix replacement
+escape ^\\
+# terminal and colors
+truecolor on
+term xterm-256color
+# turn off greeting
+startup_message off
+# turn off visual bell
+vbell off
+# editors work correctly
+altscreen on
+# normal output in window list
+windowlist string "%4n %h%=%f"
+# scrolling
+termcapinfo xterm*|rxvt*|kterm*|Eterm* ti@:te@
+# status line
+hardstatus off
+hardstatus alwayslastline '%{#00ff00}[ %H ][%{#ffffff}%= %{7}%?%-Lw%?%{1;0}%{1}(%{15}%n%f%t%?(%u)%?%{1;0}%{1})%{7}%?%+Lw%? %=%{#00ff00}][ %{#00a5ff}%{6}%Y-%m-%d %{#ffffff}%{7}%0c%{#00ff00} ]'
+
+
+
+
