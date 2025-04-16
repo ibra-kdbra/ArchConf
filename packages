@@ -478,7 +478,9 @@ if [[ $de == "koljasha_wm" ]]; then
     # clipmenu enable
     sudo sed -i 's/set -- -dmenu/set -- -dmenu -i -p Clipboard/' /usr/bin/clipmenu
     systemctl --user enable clipmenud.service
-
+    # Rarely becomes dull, then:
+    # # systemctl --user restart clipmenud.service
+    
     # screen link
     ln -s ~/.config/screen/screenrc ~/.screenrc
     
