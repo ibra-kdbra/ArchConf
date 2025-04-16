@@ -235,14 +235,16 @@ Plug 'tpope/vim-repeat'
 " ---------------
 " ----------------------------------------
 
-" Supertab - completion with <Tab>
-" ---------------
-" https://github.com/ervandew/supertab
-Plug 'ervandew/supertab'
-" ---------------
-let g:SuperTabDefaultCompletionType = "<c-n>"
-let g:SuperTabContextDefaultCompletionType = "<c-n>"
-" ----------------------------------------
+if ! has('nvim')
+	" Supertab - addition to <Tab>
+	" ---------------
+	" https://github.com/ervandew/supertab
+	Plug 'ervandew/supertab'
+	" ---------------
+	let g:SuperTabDefaultCompletionType = "<c-n>"
+	let g:SuperTabContextDefaultCompletionType = "<c-n>"
+	" ----------------------------------------
+endif
 
 " Match-up - navigation by tags, brackets...
 " key %
