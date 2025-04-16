@@ -26,11 +26,11 @@ call plug#begin()
 " Main plugins
 source ~/.config/vim/pluggins.vim
 
-" Common IDE plugins
-" source ~/.config/vim/ide_main.vim
+" Common IDE plugins (Emmet, Black)
+" source ~/.config/vim/ide.vim
 
-" Vim IDE plugins
-" source ~/.config/vim/ide_vim.vim
+" Lsp IDE plugins
+" source ~/.config/vim/lsp.vim
 
 " ----------------------------------------
 

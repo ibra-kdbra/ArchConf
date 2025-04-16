@@ -93,8 +93,8 @@ set ignorecase
 
 " default encoding
 set encoding=utf-8
-set termencoding=utf-8
 set fileencodings=utf-8,cp1251
+" set termencoding=utf-8
 
 " :vsplit opens windows to the right
 set splitright
