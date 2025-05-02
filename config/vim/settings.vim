@@ -135,7 +135,7 @@ set cursorline
 " set foldmethod=syntax
 
 " for proper Vim operation in Alacritty(ctrl+left|right)
-" if !has('nvim')
+" if ! has('nvim')
 	" set term=xterm-256color
 " endif
 

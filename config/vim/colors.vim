@@ -4,9 +4,9 @@
 
 " setting color scheme
 if has('nvim')
-    colorscheme catppuccin-mocha
-else
     colorscheme PaperColor
+else
+    colorscheme catppuccin-mocha
 endif
 
 " transparency
