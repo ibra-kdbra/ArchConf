@@ -29,12 +29,23 @@
 " ----------------------------------------
 " ----------------------------------------
 
-" PaperColor - color scheme
-" ---------------
-" https://github.com/NLKNguyen/papercolor-theme
-Plug 'nlknguyen/papercolor-theme'
-" ---------------
-" ----------------------------------------
+
+if ! has('nvim')
+	" PaperColor - color scheme
+	" ---------------
+	" https://github.com/NLKNguyen/papercolor-theme
+	Plug 'nlknguyen/papercolor-theme'
+	" ---------------
+	" ----------------------------------------
+	" Supertab - completion with <Tab>
+	" ---------------
+	" https://github.com/ervandew/supertab
+	Plug 'ervandew/supertab'
+	" ---------------
+	let g:SuperTabDefaultCompletionType = "<c-n>"
+	let g:SuperTabContextDefaultCompletionType = "<c-n>"
+	" ----------------------------------------
+endif
 
 " Lightline-Bufferline - display buffers in Lightline
 " ---------------
@@ -234,17 +245,6 @@ let g:tagbar_show_linenumbers = 2
 Plug 'tpope/vim-repeat'
 " ---------------
 " ----------------------------------------
-
-if ! has('nvim')
-	" Supertab - addition to <Tab>
-	" ---------------
-	" https://github.com/ervandew/supertab
-	Plug 'ervandew/supertab'
-	" ---------------
-	let g:SuperTabDefaultCompletionType = "<c-n>"
-	let g:SuperTabContextDefaultCompletionType = "<c-n>"
-	" ----------------------------------------
-endif
 
 " Match-up - navigation by tags, brackets...
 " key %
