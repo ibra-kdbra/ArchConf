@@ -39,7 +39,11 @@ require('lazy').setup({ -- Neovim colorscheme: ~/.config/nvim/lua/colors.lua
 }, -- Neovim LSP: ~/.config/nvim/lua/lsp.lua
 {
     import = 'lsp'
-}, -- Vim plugins from plugged/
+}, 
+  -- implemented through LSP
+  -- Emmet: ~/.config/nvim/lua/emmet.lua
+  -- { import = 'emmet' },
+-- Vim plugins from plugged/
 plugged_plugins, -- vim-plug for installing Vim plugins
 {
     'junegunn/vim-plug',
@@ -49,7 +53,7 @@ plugged_plugins, -- vim-plug for installing Vim plugins
             vim.cmd('source ' .. plug_script)
             vim.fn['plug#begin'](vim.fn.stdpath('data') .. '/plugged')
             vim.cmd('source ~/.config/vim/pluggins.vim')
-            vim.cmd('source ~/.config/vim/ide.vim')
+            -- vim.cmd('source ~/.config/vim/ide.vim')
             vim.fn['plug#end']()
         else
             print('vim-plug script not found at ' .. plug_script .. '. Run :Lazy sync to install.')

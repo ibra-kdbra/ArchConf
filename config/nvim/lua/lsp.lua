@@ -40,17 +40,31 @@ return { -- LSP
         -- >sudo npm i -g bash-language-server
         -- >sudo npm i -g emmet-ls
         -- Enable some language servers with the additional completion capabilities offered by nvim-cm
-        -- local servers = { 'pyright', 'bashls', 'emmet_ls' }
-        local servers = {'pyright', 'bashls'}
+        local servers = { 'pyright', 'bashls', 'emmet_ls' }
         for _, lsp in ipairs(servers) do
             lspconfig[lsp].setup {
                 on_attach = on_attach,
-                capabilities = capabilities
+                capabilities = capabilities,
+                
+                filetypes = (lsp == 'emmet_ls') and { 'html', 'htmldjango', 'css' } or nil,
+                init_options = (lsp == 'emmet_ls') and {
+                  html = {
+                    options = {
+                      ["bem.enabled"] = false,
+                      ["output.selfClosingStyle"] = "xhtml",
+                    },
+                  },
+                } or nil,
+                settings = (lsp == 'emmet_ls') and {
+                  emmet = {
+                    showSuggestionsAsSnippets = true,
+                    includeLanguages = {
+                      htmldjango = "html",
+                    },
+                  },
+                } or nil,
             }
         end
-        -- lspconfig.emmet_ls.setup({
-        --   filetypes = { 'html', 'htmldjango', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less' },
-        -- })
     end
 }, -- Autocompletion
 {'hrsh7th/nvim-cmp'}, {'hrsh7th/cmp-nvim-lsp'}, {'hrsh7th/cmp-buffer'}, -- Snippets
@@ -58,7 +72,10 @@ return { -- LSP
     'L3MON4D3/LuaSnip',
     config = function()
         -- Neovim Snippets: ~/.config/nvim/lua/snippets.lua
-        require("snippets")
+        local ok, _ = pcall(require, 'snippets')
+        if not ok then
+          print("Failed to load snippets.lua")
+        end
     end
 }, {
     'saadparwaiz1/cmp_luasnip',
@@ -68,8 +85,11 @@ return { -- LSP
         cmp.setup {
             snippet = {
                 expand = function(args)
-                    require('luasnip').lsp_expand(args.body)
+                local luasnip = require('luasnip')
+                if luasnip then
+                    lsp_expand(args.body)
                 end
+              end,
             },
             mapping = cmp.mapping.preset.insert({
                 ['<C-d>'] = cmp.mapping.scroll_docs(-4),
@@ -99,11 +119,11 @@ return { -- LSP
                 end, {'i', 's'})
             }),
             sources = {{
-                name = 'nvim_lsp'
+                name = 'nvim_lsp', max_item_count = 10
             }, {
-                name = 'luasnip'
+                name = 'luasnip', max_item_count = 5
             }, {
-                name = 'buffer'
+                name = 'buffer', max_item_count = 5
             }}
         }
     end
