@@ -44,7 +44,10 @@ require('lazy').setup({ -- Neovim colorscheme: ~/.config/nvim/lua/colors.lua
   -- Emmet: ~/.config/nvim/lua/emmet.lua
   -- { import = 'emmet' },
 -- Vim plugins from plugged/
-plugged_plugins, -- vim-plug for installing Vim plugins
+plugged_plugins, 
+
+-- vim-plug for installing Vim plugins
+-- :PlugInstall
 {
     'junegunn/vim-plug',
     config = function()
