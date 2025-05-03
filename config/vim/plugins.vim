@@ -1,51 +1,38 @@
 " ----------------------------------------
-" Basic plugins
+" Main plugins
 " ----------------------------------------
 
-" PaperColor - color scheme
+" ----------------------------------------
 " Lightline-Bufferline - display buffers in Lightline
 " Lightline - status line
-" Vim-Devicons - Nerd icons
-" CSS Color - css colors
+" Vim-Devicons - icons Nerd
+" CSS Color - colors css
 
-" Startify - start screen
-" NERD Tree - file manager
-" MRU - recently opened files
-" Buffer Explorer - switch between open buffers
 " FZF - fuzzy search
+" EasyMotion - easy movements
 
-" Auto Pairs - pair brackets and quotes
-" NERD Commenter - comment for different languages
-
-" EasyMotion - simple movements
-" Tagbar - window with list of tags
-" Repeat - repeat by "."
-" Supertab - complete by <Tab>
+" Auto Pairs - paired brackets and quotes
+" Repeat - extended repeat by "."
 " Match-up - move by tags, brackets...
+" NERD Commenter - commenting for different languages
 
 " Polyglot - collection of language packages for Vim
-" Xkbswitch - switch to En when entering command mode
-
+" Xkbswitch - switch to En when switching to command mode
+" ----------------------------------------
+" only for Vim
+" ----------------------------------------
+" PaperColor - color scheme
+" Supertab - completion by <Tab>
+" ----------------------------------------
+" disabled
+" ----------------------------------------
+" Startify - start screen
+" NERD Tree - file manager
+" MRU - latest opened files
+" Buffer Explorer - switch open buffers
+" Tagbar - window-tag list
 " ----------------------------------------
 " ----------------------------------------
-
-
-if ! has('nvim')
-	" PaperColor - color scheme
-	" ---------------
-	" https://github.com/NLKNguyen/papercolor-theme
-	Plug 'nlknguyen/papercolor-theme'
-	" ---------------
-	" ----------------------------------------
-	" Supertab - completion with <Tab>
-	" ---------------
-	" https://github.com/ervandew/supertab
-	Plug 'ervandew/supertab'
-	" ---------------
-	let g:SuperTabDefaultCompletionType = "<c-n>"
-	let g:SuperTabContextDefaultCompletionType = "<c-n>"
-	" ----------------------------------------
-endif
 
 " Lightline-Bufferline - display buffers in Lightline
 " ---------------
@@ -62,24 +49,24 @@ let g:lightline#bufferline#enable_devicons = 1
 Plug 'itchyny/lightline.vim'
 " ---------------
 let g:lightline = {
-	  \ 'tabline': {
-	  \   'left': [ ['buffers'] ],
-	  \   'right': [ ['close'], ['tabs'] ]
-	  \ },
-	  \ 'component_expand': {
-	  \   'buffers': 'lightline#bufferline#buffers'
-	  \ },
-	  \ 'component_type': {
-	  \   'buffers': 'tabsel'
-	  \ },
-	  \ }
+      \ 'tabline': {
+      \   'left': [ ['buffers'] ],
+      \   'right': [ ['close'], ['tabs'] ]
+      \ },
+      \ 'component_expand': {
+      \   'buffers': 'lightline#bufferline#buffers'
+      \ },
+      \ 'component_type': {
+      \   'buffers': 'tabsel'
+      \ },
+      \ }
 
 " clickable only for nvim (now not work - bug)
 " let g:lightline.component_raw = {'buffers': 1}
 " let g:lightline#bufferline#clickable = 1
 " ----------------------------------------
 
-" Vim-Devicons - Nerd icons
+" Vim-Devicons - icons Nerd
 " ---------------
 " https://github.com/ryanoasis/vim-devicons
 Plug 'ryanoasis/vim-devicons'
@@ -96,113 +83,24 @@ Plug 'ap/vim-css-color'
 " ----------------------------------------
 " ----------------------------------------
 
-" Startify - start screen
-" ---------------
-" https://github.com/mhinz/vim-startify
-Plug 'mhinz/vim-startify'
-" ---------------
-" ----------------------------------------
-
-" NERD Tree - file manager
-" ---------------
-" https://github.com/scrooloose/nerdtree
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-" ---------------
-" automatically update buffer after renaming file
-let NERDTreeAutoDeleteBuffer = 1
-" show hidden files
-let NERDTreeShowHidden = 1
-" line numbers
-let NERDTreeShowLineNumbers = 1
-" open on right side
-let g:NERDTreeWinPos = "left"
-" close after opening file
-let NERDTreeQuitOnOpen = 1
-" NERDTreeToggle - <Leader>op
-map <Leader>op :NERDTreeToggle <CR>
-" ----------------------------------------
-
-" MRU - recently opened files
-" ---------------
-" https://github.com/vim-scripts/mru.vim
-Plug 'vim-scripts/mru.vim'
-" ---------------
-" <Leader>ol - show list of recently opened files
-map <Leader>ol :MRU <CR>
-" ----------------------------------------
-
-" Buffer Explorer - switch between open buffers
-" ---------------
-" https://github.com/vim-scripts/bufexplorer.zip
-Plug 'vim-scripts/bufexplorer.zip'
-" ---------------
-" <Leader>be - open Buffer Explorer
-" <Leader>bs - open Buffer Explorer (horizontally)
-" <Leader>bv - open Buffer Explorer (vertically)
-" ----------------------------------------
-
 " FZF - fuzzy search
 " ---------------
 " https://github.com/junegunn/fzf.vim
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 " ---------------
 " see commands in ~/.config/vim/explorers.vim
 " ---------------
 " ----------------------------------------
 
-" ----------------------------------------
-" ----------------------------------------
-" Auto Pairs - paired brackets and quotes
-" ---------------
-" https://github.com/jiangmiao/auto-pairs
-Plug 'jiangmiao/auto-pairs'
-" ---------------
-let g:AutoPairsShortcutFastWrap = ''  " Fast Wrap
-let g:AutoPairsShortcutJump = ''  " Jump to next closed pair
-let g:AutoPairsShortcutBackInsert = ''  " BackInsert
-" Toggle Autopairs
-" let g:AutoPairsShortcutToggle = '<Leader>pp'
-" ----------------------------------------
-
-" NERD Commenter - commenting for various languages
-" ---------------
-" https://github.com/scrooloose/nerdcommenter
-Plug 'scrooloose/nerdcommenter'
-" ---------------
-" disable double comments
-" let g:NERDDefaultNesting = 0
-" add spaces after comment
-let g:NERDSpaceDelims = 1
-" change comment sign
-let g:NERDCustomDelimiters = {
-    \ 'python': { 'left': '#'}
-    \}
-" comment
-" [count]|<leader>|cc |NERDComComment|
-" uncomment
-" [count]|<Leader>|cu |NERDComUncommentLine|
-" toggle comment/uncomment
-" [count]|<Leader>|c<space> |NERDComToggleComment|
-" block formatted comment
-" [count]<leader>cs |NERDComSexyComment|
-" invert comment/uncomment
-" [count]|<Leader>|ci |NERDComInvertComment|
-" comment at the end of line
-" |<Leader>|cA |NERDComAppendComment|
-" ----------------------------------------
-
-" ----------------------------------------
-" ----------------------------------------
-
-" EasyMotion - easy motions
+" EasyMotion - easy movements
 " ---------------
 " https://github.com/easymotion/vim-easymotion
 Plug 'easymotion/vim-easymotion'
 " ---------------
 " disable case sensitivity
 let g:EasyMotion_smartcase = 1
-" default keys, where <Leader> is <Leader><Leader>
+" standard keys, where <Leader> - it's <Leader><Leader>
 " Default Mapping      | Details
 "    ---------------------|----------------------------------------------
 "    <Leader>f{char}      | Find {char} to the right. See |f|.
@@ -224,34 +122,61 @@ let g:EasyMotion_smartcase = 1
 "    <Leader>s            | Find(Search) {char} forward and backward.
 " ----------------------------------------
 
-" Tagbar - tag list window
-" (requires installed ctags)
-" list of supported languages
-" ctags --list-languages
-" list of tags for a specific language
-" ctags --list-kinds=<Lang>
-" ---------------
-" https://github.com/majutsushi/tagbar
-Plug 'majutsushi/tagbar'
-" ---------------
-nmap <Leader>tb :TagbarToggle<CR>
-let g:tagbar_sort = 0
-let g:tagbar_show_linenumbers = 2
+" ----------------------------------------
 " ----------------------------------------
 
-" Repeat - extended repeat with "."
+" Auto Pairs - paired brackets and quotes
+" ---------------
+" https://github.com/jiangmiao/auto-pairs
+Plug 'jiangmiao/auto-pairs'
+" ---------------
+let g:AutoPairsShortcutFastWrap = ''  " Fast Wrap
+let g:AutoPairsShortcutJump = ''  " Jump to next closed pair
+let g:AutoPairsShortcutBackInsert = ''  " BackInsert
+" Toggle Autopairs
+" let g:AutoPairsShortcutToggle = '<Leader>pp'
+" ----------------------------------------
+
+" Repeat - extended repeat by "."
 " ---------------
 " https://github.com/tpope/vim-repeat
 Plug 'tpope/vim-repeat'
 " ---------------
 " ----------------------------------------
 
-" Match-up - navigation by tags, brackets...
+" Match-up - move by tags, brackets...
 " key %
 " " ---------------
 " https://github.com/andymass/vim-matchup
 Plug 'andymass/vim-matchup'
 " ---------------
+" ----------------------------------------
+" NERD Commenter - commenting for various languages
+" ---------------
+" https://github.com/scrooloose/nerdcommenter
+Plug 'scrooloose/nerdcommenter'
+" ---------------
+" disable double commenting
+" let g:NERDDefaultNesting = 0
+" add spaces after comment symbols
+let g:NERDSpaceDelims = 1
+" change comment symbols
+" \ 'lang': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
+let g:NERDCustomDelimiters = {
+    \ 'python': { 'left': '#'}
+    \}
+" comment
+" [count]|<leader>|cc |NERDComComment|
+" uncomment
+" [count]|<Leader>|cu |NERDComUncommentLine|
+" toggle comment
+" [count]|<Leader>|c<space> |NERDComToggleComment|
+" formatted block comment
+" [count]<leader>cs |NERDComSexyComment|
+" invert commented/uncommented state
+" [count]|<Leader>|ci |NERDComInvertComment|
+" append comment to end of line
+" |<Leader>|cA |NERDComAppendComment|
 " ----------------------------------------
 
 " ----------------------------------------
@@ -283,9 +208,94 @@ let g:XkbSwitchIMappingsTr = {
           \  '>': 'йцукенгшщзфывапролджячсмитьюё.'.
           \       'ЙЦУКЕНГШЩЗФЫВАПРОЛДЖЯЧСМИТЬБЮ,Ё"№;:?/'},
           \ }
-" path to the library
+" path to library
 	let g:XkbSwitchLib = '/usr/lib/libxkbswitch.so'
 " ----------------------------------------
+
+" ----------------------------------------
+" ----------------------------------------
+
+" only for Vim
+if ! has('nvim')
+	" PaperColor - color scheme
+	" ---------------
+	" https://github.com/NLKNguyen/papercolor-theme
+	Plug 'nlknguyen/papercolor-theme'
+	" ---------------
+	" ----------------------------------------
+
+	" Supertab - completion with <Tab>
+	" ---------------
+	" https://github.com/ervandew/supertab
+	Plug 'ervandew/supertab'
+	" ---------------
+	let g:SuperTabDefaultCompletionType = "<c-n>"
+	let g:SuperTabContextDefaultCompletionType = "<c-n>"
+	" ----------------------------------------
+endif
+
+" ----------------------------------------
+" ----------------------------------------
+
+" " Startify - start screen
+" " ---------------
+" " https://github.com/mhinz/vim-startify
+" Plug 'mhinz/vim-startify'
+" " ---------------
+" " ----------------------------------------
+
+" " NERD Tree - file manager
+" " ---------------
+" " https://github.com/scrooloose/nerdtree
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" " ---------------
+" " automatically update buffer after renaming file
+" let NERDTreeAutoDeleteBuffer = 1
+" " show hidden files
+" let NERDTreeShowHidden = 1
+" " line numbers
+" let NERDTreeShowLineNumbers = 1
+" " open on the right side
+" let g:NERDTreeWinPos = "left"
+" " close after opening file
+" let NERDTreeQuitOnOpen = 1
+" " NERDTreeToggle - <Leader>op
+" map <Leader>op :NERDTreeToggle <CR>
+" " ----------------------------------------
+
+" " MRU - recently opened files
+" " ---------------
+" " https://github.com/vim-scripts/mru.vim
+" Plug 'vim-scripts/mru.vim'
+" " ---------------
+" " <Leader>ol - show list of recent files
+" map <Leader>ol :MRU <CR>
+" " ----------------------------------------
+
+" " Buffer Explorer - switch between open buffers
+" " ---------------
+" " https://github.com/vim-scripts/bufexplorer.zip
+" Plug 'vim-scripts/bufexplorer.zip'
+" " ---------------
+" " <Leader>be - open Buffer Explorer
+" " <Leader>bs - open Buffer Explorer (horizontal)
+" " <Leader>bv - open Buffer Explorer (vertical)
+" " ----------------------------------------
+
+" " Tagbar - tag list window
+" " (requires installed ctags)
+" " list of supported languages
+" " ctags --list-languages
+" " list of tags for specific language
+" " ctags --list-kinds=<Lang>
+" " ---------------
+" " https://github.com/majutsushi/tagbar
+" Plug 'majutsushi/tagbar'
+" " ---------------
+" nmap <Leader>tb :TagbarToggle<CR>
+" let g:tagbar_sort = 0
+" let g:tagbar_show_linenumbers = 2
+" " ----------------------------------------
 
 " ----------------------------------------
 " ----------------------------------------
