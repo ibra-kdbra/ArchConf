@@ -195,7 +195,7 @@ if [[ $de == "koljasha_wm" ]]; then
     remmina samba x11vnc
     vlc
     "
-elif [[ $de == "xfce" ]]; then
+elif [[ $de == "xfce" ]]; then-
     packages="
     $packages
     lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
@@ -319,8 +319,9 @@ fi
 
 # spoofdpi-bin - anti-censorship tool
 
-# firejail - запуск приложения в песочнице
-# distrobox docker|podman - разные дистрибутивы через контейнеры
+# docker docker-buildx docker-compose | podman - containers
+# firejail - run application in sandbox
+# distrobox - different distributions via containers
 
 # openvpn3 - new version OpenVpn
 
