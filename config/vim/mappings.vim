@@ -45,8 +45,8 @@ vmap <C-c> "+y
 " nmap <Leader>VS :sb
 
 " Vsplit and Tab
-nmap <Leader>v :vertical sb%
-nmap <Leader>V :tab sb%
+nmap <Leader>v :vertical sb%<CR>
+nmap <Leader>V :tab sb%<CR>:tabp<CR>:close<CR>:tabn<CR>
 
 " switch split
 nmap <C-Left> <C-W>h
