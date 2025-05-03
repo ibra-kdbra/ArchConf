@@ -27,8 +27,8 @@ tnoremap <Esc> <C-\><C-n>
 " t - open as tabs
 
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-let g:netrw_browse_split = 0
-let g:netrw_liststyle = 3
+let g:netrw_browse_split = 0        " Open files in the current window
+let g:netrw_liststyle = 3           " Tree view style
 " let g:netrw_preview   = 1
 " let g:netrw_alto = 0
 " let g:netrw_winsize   = 30
