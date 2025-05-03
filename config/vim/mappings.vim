@@ -13,16 +13,16 @@ let &keywordprg=':help'
 " <Leader><space> - disable search highlighting
 nmap <Leader>/ :nohlsearch <CR>
 
-" <Leader>ss - save file
-nmap <Leader>ss :w! <CR>
+" <Leader>S - save file
+nmap <Leader>S :w! <CR>
 
-" <Leader>qq - close buffer without saving
-nmap <Leader>qq :bp\|bd! #<CR>
+" <Leader>Q - close buffer without saving
+nmap <Leader>Q :bp\|bd! #<CR>
 
-" <Leader>bb - next buffer
-nmap <Leader>bb :bn <CR>
-" <Leader>BB - previous buffer
-nmap <Leader>BB :bp <CR>
+" <Leader>b - next buffer
+nmap <Leader>b :bn <CR>
+" <Leader>B - previous buffer
+nmap <Leader>B :bp <CR>
 
 " copy to system clipboard: select, then "+y
 vmap <C-c> "+y
@@ -31,12 +31,12 @@ vmap <C-c> "+y
 " list of all buffers/registers: :registers
 
 " vsplit|split
-nmap <Leader>vv :vsplit
-nmap <Leader>vs :split
+nmap <Leader>v :vsplit
+" nmap <Leader>vs :split
 
 " vsplit|split by buffer number
-nmap <Leader>VV :vertical sb
-nmap <Leader>VS :sb
+nmap <Leader>V :vertical sb
+" nmap <Leader>VS :sb
 
 " switch split
 nmap <C-Left> <C-W>h

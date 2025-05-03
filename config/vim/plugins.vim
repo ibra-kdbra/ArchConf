@@ -165,18 +165,16 @@ let g:NERDSpaceDelims = 1
 let g:NERDCustomDelimiters = {
     \ 'python': { 'left': '#'}
     \}
-" comment
-" [count]|<leader>|cc |NERDComComment|
-" uncomment
-" [count]|<Leader>|cu |NERDComUncommentLine|
-" toggle comment
-" [count]|<Leader>|c<space> |NERDComToggleComment|
-" formatted block comment
-" [count]<leader>cs |NERDComSexyComment|
-" invert commented/uncommented state
-" [count]|<Leader>|ci |NERDComInvertComment|
-" append comment to end of line
-" |<Leader>|cA |NERDComAppendComment|
+
+" Disable default keybindings for NERDCommenter
+let g:NERDCreateDefaultMappings = 0
+
+" Common keybindings for normal and visual modes
+noremap <leader>cc <Plug>NERDCommenterComment
+noremap <leader>cu <Plug>NERDCommenterUncomment
+noremap <leader>c<space> <Plug>NERDCommenterToggle
+
+
 " ----------------------------------------
 
 " ----------------------------------------
