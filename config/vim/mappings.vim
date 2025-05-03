@@ -33,12 +33,15 @@ vmap <C-c> "+y
 " list of all buffers/registers: :registers
 
 " vsplit|split
-nmap <Leader>v :vsplit
+" nmap <Leader>v :vsplit
 " nmap <Leader>vs :split
-
 " vsplit|split by buffer number
-nmap <Leader>V :vertical sb
+"nmap <Leader>V :vertical sb
 " nmap <Leader>VS :sb
+
+" Vsplit and Tab
+nmap <Leader>v :vertical sb%
+nmap <Leader>V :tab sb%
 
 " switch split
 nmap <C-Left> <C-W>h
