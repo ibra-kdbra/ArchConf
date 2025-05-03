@@ -14,17 +14,21 @@ endif
 
 " ctrl-\ + ctrl-n - exit terminal -> on Esc
 tnoremap <Esc> <C-\><C-n>
+
+" ----------------------------------------
 " ----------------------------------------
 
 " Explore
 " ---------------
 " built-in explorer :Exp :Rex | :Tex | :Hex :Vex |:Lex :Sex
+
 " gn - make directory root
 " ctrl-l - update directory
 " enter - open in this window
-" o - open as split
-" v - open as vsplit
 " t - open as tabs
+" v - open as vsplit
+" o - open as split
+" ------------------
 
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
 let g:netrw_browse_split = 0        " Open files in the current window
@@ -48,15 +52,48 @@ function ToggleExplorer()
 endfun
 
 " noremap <Leader>oo :Exp <CR>
-noremap <Leader>o :call ToggleExplorer() <CR>
-noremap <Leader>O :Vex <CR>
+" noremap <Leader>O :Vex <CR>
+noremap <Leader>O :call ToggleExplorer() <CR>
 
 " ----------------------------------------
+" ----------------------------------------
 
-" FZF Commands
+" NERD Tree
+" ---------------
+" <Leader>p - toggle open/close
+
+" t - open tab
+" v - open vsplit
+" i - open split
+" ---------------
+
+" automatically update buffer after renaming file
+let NERDTreeAutoDeleteBuffer = 1
+" show hidden files
+let NERDTreeShowHidden = 1
+" line numbering
+let NERDTreeShowLineNumbers = 1
+" open on the right side
+let g:NERDTreeWinPos = "left"
+" window width
+let g:NERDTreeWinSize = 35
+" close after opening file
+" let NERDTreeQuitOnOpen = 1
+" NERDTreeToggle - <Leader>op
+" remap keys for vsplit
+let g:NERDTreeMapOpenVSplit = 'v'
+let g:NERDTreeMapPreviewVSplit = 'gv'
+
+map <Leader>o :NERDTreeToggle <CR>
+
+" ----------------------------------------
+" ----------------------------------------
+
+" FZF
 " ---------------
 " :help fzf-vim-commands
 " ctrl-c - close window
+
 " ctrl-t - open tab
 " ctrl-x - open split
 " ctrl-v - open vsplit

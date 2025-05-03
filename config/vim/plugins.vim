@@ -9,8 +9,8 @@
 " CSS Color - colors css
 
 " FZF - fuzzy search
+" NERD Tree - file manager
 " EasyMotion - easy movements
-
 " Auto Pairs - paired brackets and quotes
 " Repeat - extended repeat by "."
 " Match-up - move by tags, brackets...
@@ -88,6 +88,15 @@ Plug 'ap/vim-css-color'
 " https://github.com/junegunn/fzf.vim
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
+" ---------------
+" see commands in ~/.config/vim/explorers.vim
+" ---------------
+" ----------------------------------------
+
+" NERD Tree - file manager
+" ---------------
+" https://github.com/scrooloose/nerdtree
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " ---------------
 " see commands in ~/.config/vim/explorers.vim
 " ---------------
@@ -224,25 +233,6 @@ endif
 " " https://github.com/mhinz/vim-startify
 " Plug 'mhinz/vim-startify'
 " " ---------------
-" " ----------------------------------------
-
-" " NERD Tree - file manager
-" " ---------------
-" " https://github.com/scrooloose/nerdtree
-" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-" " ---------------
-" " automatically update buffer after renaming file
-" let NERDTreeAutoDeleteBuffer = 1
-" " show hidden files
-" let NERDTreeShowHidden = 1
-" " line numbers
-" let NERDTreeShowLineNumbers = 1
-" " open on the right side
-" let g:NERDTreeWinPos = "left"
-" " close after opening file
-" let NERDTreeQuitOnOpen = 1
-" " NERDTreeToggle - <Leader>op
-" map <Leader>op :NERDTreeToggle <CR>
 " " ----------------------------------------
 
 " " MRU - recently opened files
