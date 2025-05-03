@@ -320,6 +320,7 @@ fi
 # spoofdpi-bin - anti-censorship tool
 
 # docker docker-buildx docker-compose | podman - containers
+# lazydocker-bin - TUI for Docker
 # firejail - run application in sandbox
 # distrobox - different distributions via containers
 
