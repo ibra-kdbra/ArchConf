@@ -19,7 +19,7 @@
 " Polyglot - collection of language packages for Vim
 " Xkbswitch - switch to En when switching to command mode
 " ----------------------------------------
-" only for Vim
+" only for 
 " ----------------------------------------
 " PaperColor - color scheme
 " Supertab - completion by <Tab>
