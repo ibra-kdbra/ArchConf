@@ -10,6 +10,9 @@ set lines=45 columns=150
 " hide GUI
 set guioptions=
 
+" font
+set guifont=Monospace,10
+
 " hide Toolbar
 " set guioptions-=T
 " hide Menu
