@@ -13,11 +13,13 @@ let &keywordprg=':help'
 " <Leader><space> - disable search highlighting
 nmap <Leader>/ :nohlsearch <CR>
 
-" <Leader>S - save file
+" <Leader>W|S - save file
+nmap <Leader>W :w! <CR>
 nmap <Leader>S :w! <CR>
 
-" <Leader>Q - close buffer without saving
+" <Leader>X|Q - close buffer without saving
 nmap <Leader>Q :bp\|bd! #<CR>
+nmap <Leader>X :bp\|bd! #<CR>
 
 " <Leader>b - toggle buffer
 nmap <Leader>b :b# <CR>
