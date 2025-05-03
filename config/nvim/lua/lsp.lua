@@ -6,10 +6,17 @@
 -- nvim-cmp
 -- settings from https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
 ---------------
-return { -- LSP
+-- mason.nvim
+-- settings from https://github.com/williamboman/mason.nvim
+-- mason-lspconfig.nvim
+-- settings from https://github.com/williamboman/mason-lspconfig.nvim
+---------------
+return { -- Mason for installing LSP servers
+    {'williamboman/mason.nvim'}, -- Integration Mason with lspconfig
+    {'williamboman/mason-lspconfig.nvim'}, -- LSP
 {
     'neovim/nvim-lspconfig',
-
+    dependencies = {'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim', 'hrsh7th/cmp-nvim-lsp'},
     config = function()
         local opts = {
             noremap = true,
@@ -106,7 +113,6 @@ return { -- LSP
 {'hrsh7th/nvim-cmp'}, {'hrsh7th/cmp-nvim-lsp'}, {'hrsh7th/cmp-buffer'}, -- Snippets
 {
     'L3MON4D3/LuaSnip',
-
     config = function()
         -- Neovim Snippets: ~/.config/nvim/lua/snippets.lua
         local ok, _ = pcall(require, 'snippets')
@@ -116,7 +122,6 @@ return { -- LSP
     end
 }, {
     'saadparwaiz1/cmp_luasnip',
-
     config = function()
         local cmp = require('cmp')
         cmp.setup({
