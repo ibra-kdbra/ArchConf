@@ -33,9 +33,10 @@ if vim.fn.isdirectory(plugged_dir) == 1 then
 end
 
 -- Lazy.nvim setup
-require('lazy').setup({ -- Neovim colorscheme: ~/.config/nvim/lua/colors.lua
+require('lazy').setup({ 
+    -- Neovim Plugins: ~/.config/nvim/lua/plugins.lua
 {
-    import = 'colors'
+    import = 'plugins'
 }, -- Neovim LSP: ~/.config/nvim/lua/lsp.lua
 {
     import = 'lsp'
@@ -55,7 +56,7 @@ plugged_plugins,
         if vim.fn.filereadable(plug_script) == 1 then
             vim.cmd('source ' .. plug_script)
             vim.fn['plug#begin'](vim.fn.stdpath('data') .. '/plugged')
-            vim.cmd('source ~/.config/vim/pluggins.vim')
+            vim.cmd('source ~/.config/vim/plugins.vim')
             -- vim.cmd('source ~/.config/vim/ide.vim')
             vim.fn['plug#end']()
         else
