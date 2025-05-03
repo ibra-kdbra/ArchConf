@@ -12,8 +12,8 @@
 -- settings from https://github.com/williamboman/mason-lspconfig.nvim
 ---------------
 return { -- Mason for installing LSP servers
-    {'williamboman/mason.nvim'}, -- Integration Mason with lspconfig
-    {'williamboman/mason-lspconfig.nvim'}, -- LSP
+{'williamboman/mason.nvim'}, -- Mason integration with lspconfig
+{'williamboman/mason-lspconfig.nvim'}, -- LSP
 {
     'neovim/nvim-lspconfig',
     dependencies = {'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim', 'hrsh7th/cmp-nvim-lsp'},
@@ -28,7 +28,7 @@ return { -- Mason for installing LSP servers
         vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
         vim.keymap.set('n', '[D', vim.diagnostic.goto_prev, opts)
 
-        -- on_attach function
+        -- Function on_attach
         local on_attach = function(client, bufnr)
             vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
             local bufopts = {
@@ -43,17 +43,21 @@ return { -- Mason for installing LSP servers
             vim.keymap.set('n', 'grn', vim.lsp.buf.rename, bufopts)
         end
 
-        -- Setup capabilities for nvim-cmp
+        -- Set capabilities for nvim-cmp
         local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-        -- Access lspconfig configurations
-        local lspconfig = require('lspconfig')
+        -- Set up Mason
+        require('mason').setup()
 
-        -- !!! Need to install LSP Server
-        -- https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md
-        -- >sudo npm i -g pyright
-        -- >sudo npm i -g bash-language-server
-        -- >sudo npm i -g emmet-ls
+        -- Set up Mason-lspconfig
+        -- Install only these servers
+        require('mason-lspconfig').setup({
+            ensure_installed = {'pyright', 'bashls'}
+            -- ensure_installed = { 'pyright', 'bashls', 'emmet_ls' },
+        })
+
+        -- Get access to nvim-lspconfig configurations
+        local lspconfig = require('lspconfig')
 
         -- List of servers and their configurations
         local servers = {
