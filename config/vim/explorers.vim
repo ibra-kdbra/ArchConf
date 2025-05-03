@@ -4,12 +4,12 @@
 
 "  Terminal
 " ---------------
-if has('nvim')
+if ! has('nvim')
 	nmap <Leader>tt :terminal <CR>
-	nmap <Leader>tv :vertical terminal <CR>
+	nmap <Leader>TT :vertical terminal <CR>
 else
 	nmap <Leader>tt :split term://fish <CR> :startinsert <CR>
-	nmap <Leader>tv :vsplit term://fish <CR> :startinsert <CR>
+	nmap <Leader>TT :vsplit term://fish <CR> :startinsert <CR>
 endif
 
 " ctrl-\ + ctrl-n - exit terminal -> on Esc
@@ -62,33 +62,46 @@ noremap <Leader>OO :Vex <CR>
 " ctrl-v - open vsplit
 " ---------------
 
-" FZF Files
-nmap <Leader>f<Leader> :Files<CR>
 " FZF Buffers
-nmap <Leader>ff :Buffers<CR>
+nmap <Leader>f<Leader> :Buffers<CR>
+" FZF Files
+nmap <Leader>ff :Files<CR>
 " FZF Windows
 nmap <Leader>fw :Windows<CR>
+
 " FZF Rg
 nmap <Leader>fr :Rg<CR>
+" FZF Jumps
+nmap <Leader>fj :Jumps<CR>
+" FZF History
+nmap <Leader>fh :History<CR>
+
 " FZF Blines
 nmap <Leader>f/ :BLines<CR>
 " FZF Btags
 nmap <Leader>ft :BTags<CR>
+
 " FZF Changes
 nmap <Leader>fc :Changes<CR>
-" FZF Jumps
-nmap <Leader>fj :Jumps<CR>
 " FZF Marks
 nmap <Leader>fm :Marks<CR>
-" FZF History
-nmap <Leader>fh :History<CR>
+
 " FZF GFiles? (git status)
 nmap <Leader>fg :GFiles?<CR>
+
+" f? - help
+" FZF Helptags
+nmap <Leader>f?h :Helptags<CR>
+" FZF Normal mode mappings
+nmap <Leader>f?m :Maps<CR>
+
+" fs - settings
+" FZF Color schemes
+nmap <Leader>fsc :Colors<CR>
 " FZF Filetypes
-nmap <Leader>fp :Filetypes<CR>
+nmap <Leader>fsf :Filetypes<CR>
 
 " ----------------------------------------
 " ----------------------------------------
 
 " vim:ft=vim
-
