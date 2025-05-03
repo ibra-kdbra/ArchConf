@@ -10,8 +10,16 @@ set timeoutlen=5000 ttimeoutlen=0
 " help on word when pressing K
 let &keywordprg=':help'
 
-" Не закрывать последнее окно с Ctrl-w q
-nnoremap <C-w>q :if winnr('$') > 1 \| wincmd c \| elseif tabpagenr('$') > 1 \| tabclose \| else \| echo "Do not close last window" \| endif<CR>
+" Don't close the last window with Ctrl-w q
+nnoremap <C-w>q :if winnr('$') > 1 \
+            \| wincmd c \
+            \| echo "Window closed" \
+            \| elseif tabpagenr('$') > 1 \
+            \| tabclose \
+            \| echo "Tab closed" \
+            \| else \
+            \| echo "Don't close the last window" \
+            \| endif<CR>
 
 " <Leader><space> - disable search highlighting
 nmap <Leader>/ :nohlsearch <CR>
