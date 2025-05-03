@@ -19,10 +19,12 @@ nmap <Leader>S :w! <CR>
 " <Leader>Q - close buffer without saving
 nmap <Leader>Q :bp\|bd! #<CR>
 
+" <Leader>b - toggle buffer
+nmap <Leader>b :b# <CR>
 " <Leader>b - next buffer
 nmap <Leader>b :bn <CR>
 " <Leader>B - previous buffer
-nmap <Leader>B :bp <CR>
+" nmap <Leader>B :bp <CR>
 
 " copy to system clipboard: select, then "+y
 vmap <C-c> "+y
