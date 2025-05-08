@@ -52,12 +52,25 @@ return { -- Mason for installing LSP servers
         -- Set up Mason-lspconfig
         -- Install only these servers
         require('mason-lspconfig').setup({
-            ensure_installed = {'pyright', 'bashls'}
-            -- ensure_installed = { 'pyright', 'bashls', 'emmet_ls' },
+            ensure_installed = { 
+                'pyright',
+                'bashls',
+                'dockerls',
+                -- 'docker_compose_language_service',
+                -- 'emmet_ls'  
+            },
         })
 
         -- Get access to nvim-lspconfig configurations
         local lspconfig = require('lspconfig')
+
+        -- Autocommand to set filetype for docker-compose files
+      vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+        pattern = {"docker-compose.yml", "docker-compose.yaml"},
+        callback = function()
+          vim.bo.filetype = "yaml.docker-compose"
+        end,
+    })
 
         -- List of servers and their configurations
         local servers = {
@@ -78,6 +91,30 @@ return { -- Mason for installing LSP servers
                 cmd = lspconfig.bashls.cmd,
                 root_dir = lspconfig.bashls.root_dir
             },
+            dockerls = {
+                cmd = lspconfig.dockerls.cmd,
+                root_dir = lspconfig.dockerls.root_dir,
+                filetypes = {'dockerfile'},
+                settings = {
+                    docker = {
+                        languages = {
+                            dockerfile = {
+                                enabled = true
+                            }
+                        }
+                    }
+                }
+            },
+            docker_compose_language_service = {
+                cmd = lspconfig.docker_compose_language_service.cmd,
+                root_dir = lspconfig.docker_compose_language_service.root_dir,
+                filetypes = {'yaml.docker-compose'},
+                settings = {
+                    telemetry = {
+                        enabled = false -- Disable telemetry if not needed
+                    }
+                }
+            },
             emmet_ls = {
                 cmd = lspconfig.emmet_ls.cmd,
                 root_dir = lspconfig.emmet_ls.root_dir,
@@ -86,19 +123,20 @@ return { -- Mason for installing LSP servers
                     html = {
                         options = {
                             ['bem.enabled'] = false,
-                            ['output.selfClosingStyle'] = 'xhtml'
-                        }
-                    }
+                            ['output.selfClosingStyle'] = 'xhtml',
+                        },
+                    },
                 },
                 settings = {
                     emmet = {
                         showSuggestionsAsSnippets = true,
                         includeLanguages = {
                             htmldjango = 'html'
-                        }
-                    }
-                }
-            }
+                        },
+                    },
+                },
+            },
+            
         }
 
         -- Configure and start servers
