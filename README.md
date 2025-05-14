@@ -22,8 +22,8 @@
     * `pacman-key --populate`
     * `pacman -Sy archlinux-keyring`
 * `pacman -Sy git`
-* `git clone https://github.com/ibra-kdbra/`
-* `cd archlinux && ./installer`
+* `git clone https://github.com/ibra-kdbra/ArchConf`
+* `cd ArchConf && ./installer`
 
 ***
 #### [Arch Linux Installation Guide](https://wiki.archlinux.org/index.php/Installation_guide)
