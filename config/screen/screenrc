@@ -1,5 +1,26 @@
 # https://wiki.archlinux.org/title/GNU_Screen
 
+#
+# Quick Help
+#
+# `screen -ls` - list sessions
+# `screen -r` - attach to last session
+#
+# `prefix + ?` - help
+# `prefix + d` - detach
+#
+# `prefix + c` - new window
+# `prefix + "` - list windows
+# `prefix + prefix` - previous window
+# `prefix + space n p` - switch windows
+# `prefix + k` - delete window
+#
+# `prefix + | s` - split
+# `prefix + tab` - switch splits
+# `prefix + x` - delete split
+#
+
+
 # prefix replacement
 escape ^\\
 
