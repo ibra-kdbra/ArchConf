@@ -3,6 +3,9 @@
 #
 # Quick Help
 #
+# ctrl-a - prefix default
+# ctrl-\ - prefix used
+#
 # `screen -ls` - list sessions
 # `screen -r` - attach to last session
 #
@@ -63,5 +66,5 @@ hardstatus alwayslastline '%{#00ff00}[ %H ][ %{#ffffff}%= %{7}%?%-Lw%?%{1}%n%f %
 #
 
 # hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{B}%Y-%m-%d %{W}%c:%s %{g}]'
-#LoadAverage
+# Setting LoadAverage
 # hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][ %{B}%Y-%m-%d %{W}%c:%s %{g}]'
