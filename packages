@@ -304,7 +304,9 @@ fi
 # sublime-text-4 - text editor
 
 # onlyoffice-bin - office
-# libreoffice-still libreoffice-still-ru - office
+# libreoffice-still libreoffice-still-en - office
+
+# thunderbird thunderbird-en - email client
 
 # xreader, atril - simple document viewer
 # xournalpp - document viewer with notes
