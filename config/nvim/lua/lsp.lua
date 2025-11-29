@@ -1,214 +1,237 @@
 -- ~/.config/nvim/lua/lsp.lua
+
 ---------------
 -- nvim-lspconfig
--- settings from https://github.com/neovim/nvim-lspconfig
+-- See: https://github.com/neovim/nvim-lspconfig
 ---------------
 -- nvim-cmp
+-- See: https://github.com/hrsh7th/nvim-cmp
 -- settings from https://github.com/neovim/nvim-lspconfig/wiki/Autocompletion
 ---------------
 -- mason.nvim
--- settings from https://github.com/williamboman/mason.nvim
+-- See: https://github.com/mason-org/mason.nvim
 -- mason-lspconfig.nvim
--- settings from https://github.com/williamboman/mason-lspconfig.nvim
+-- See: https://github.com/mason-org/mason-lspconfig.nvim
 ---------------
-return { -- Mason for installing LSP servers
-{'williamboman/mason.nvim'}, -- Mason integration with lspconfig
-{'williamboman/mason-lspconfig.nvim'}, -- LSP
-{
-    'neovim/nvim-lspconfig',
-    dependencies = {'williamboman/mason.nvim', 'williamboman/mason-lspconfig.nvim', 'hrsh7th/cmp-nvim-lsp'},
+
+return {
+  -- Mason for installing LSP servers
+  -- See: https://github.com/mason-org/mason.nvim
+  {
+    'mason-org/mason.nvim',
+    -- Make sure setup is called before mason-lspconfig.nvim
     config = function()
-        local opts = {
-            noremap = true,
-            silent = true
-        }
+      require("mason").setup()
+    end
+  },
 
-        -- Diagnostic mappings
-        vim.keymap.set('n', '[ ', vim.diagnostic.setloclist, opts)
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
-        vim.keymap.set('n', '[D', vim.diagnostic.goto_prev, opts)
+  -- Mason integration with lspconfig
+  -- See: https://github.com/mason-org/mason-lspconfig.nvim
+  {
+    'mason-org/mason-lspconfig.nvim',
+    dependencies = {
+      'mason-org/mason.nvim', -- Mason manager
+      'neovim/nvim-lspconfig', -- LSP configurations
+      'hrsh7th/cmp-nvim-lsp',  -- LSP capabilities for nvim-cmp
+    },
+    -- Using opts for configuration with lazy.nvim is recommended.
+    -- This setup automatically calls require('mason-lspconfig').setup()
+    opts = {
+      -- Automatically install listed servers if they are not already installed
+      ensure_installed = {
+        'pyright',
+        'bashls',
+        -- 'dockerls',
+        -- 'docker_compose_language_service',
+        -- 'emmet_ls',
+      },
+      -- Disable automatic enabling of servers installed via Mason.
+      -- We configure and enable them manually below using vim.lsp.config/enable.
+      -- This avoids potential conflicts with our custom setup.
+      automatic_enable = false,
+    },
+  },
 
-        -- Function on_attach
-        local on_attach = function(client, bufnr)
-            vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
-            local bufopts = {
-                noremap = true,
-                silent = true,
-                buffer = bufnr
-            }
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-            vim.keymap.set('n', 'grf', vim.lsp.buf.references, bufopts)
-            vim.keymap.set('n', 'grn', vim.lsp.buf.rename, bufopts)
-        end
+  -- LSP
+  -- Provides default configurations for various LSP servers.
+  -- See: https://github.com/neovim/nvim-lspconfig
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      -- Mason packages are handled by mason-lspconfig.nvim above
+      'mason-org/mason-lspconfig.nvim',
+      'hrsh7th/cmp-nvim-lsp',
+    },
+    config = function()
+      local opts = { noremap = true, silent = true }
 
-        -- Set capabilities for nvim-cmp
-        local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      -- Diagnostic mappings
+      vim.keymap.set('n', '[ ', vim.diagnostic.setloclist, opts)
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
+      vim.keymap.set('n', '[D', vim.diagnostic.goto_prev, opts)
 
-        -- Set up Mason
-        require('mason').setup()
+      -- on_attach function
+      local on_attach = function(client, bufnr)
+        -- Set omnifunc for buffer
+        vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+        local bufopts = { noremap = true, silent = true, buffer = bufnr }
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+        vim.keymap.set('n', 'E', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+        vim.keymap.set('n', 'grf', vim.lsp.buf.references, bufopts)
+        vim.keymap.set('n', 'grn', vim.lsp.buf.rename, bufopts)
+      end
 
-        -- Set up Mason-lspconfig
-        -- Install only these servers
-        require('mason-lspconfig').setup({
-            ensure_installed = { 
-                'pyright',
-                'bashls',
-                -- 'dockerls',
-                -- 'docker_compose_language_service',
-                -- 'emmet_ls'  
-            },
-        })
+      -- Setting up capabilities for nvim-cmp
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-        -- Get access to nvim-lspconfig configurations
-        local lspconfig = require('lspconfig')
-
-        -- Autocommand to set filetype for docker-compose files
+      -- Autocommand to set filetype for docker-compose files
       vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
         pattern = {"docker-compose.yml", "docker-compose.yaml"},
         callback = function()
           vim.bo.filetype = "yaml.docker-compose"
         end,
-    })
+      })
 
-        -- List of servers and their configurations
-        local servers = {
-            pyright = {
-                cmd = lspconfig.pyright.cmd,
-                root_dir = lspconfig.pyright.root_dir,
-                settings = {
-                    python = {
-                        analysis = {
-                            autoSearchPaths = true,
-                            useLibraryCodeForTypes = true,
-                            diagnosticMode = 'workspace'
-                        }
-                    }
-                }
+      -- List of servers and their configurations
+      local servers = {
+
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'workspace',
+              },
             },
-            bashls = {
-                cmd = lspconfig.bashls.cmd,
-                root_dir = lspconfig.bashls.root_dir
-            },
-            dockerls = {
-                cmd = lspconfig.dockerls.cmd,
-                root_dir = lspconfig.dockerls.root_dir,
-                filetypes = {'dockerfile'},
-                settings = {
-                    docker = {
-                        languages = {
-                            dockerfile = {
-                                enabled = true
-                            }
-                        }
-                    }
-                }
-            },
-            docker_compose_language_service = {
-                cmd = lspconfig.docker_compose_language_service.cmd,
-                root_dir = lspconfig.docker_compose_language_service.root_dir,
-                filetypes = {'yaml.docker-compose'},
-                settings = {
-                    telemetry = {
-                        enabled = false -- Disable telemetry if not needed
-                    }
-                }
-            },
-            emmet_ls = {
-                cmd = lspconfig.emmet_ls.cmd,
-                root_dir = lspconfig.emmet_ls.root_dir,
-                filetypes = {'html', 'htmldjango', 'css'},
-                init_options = {
-                    html = {
-                        options = {
-                            ['bem.enabled'] = false,
-                            ['output.selfClosingStyle'] = 'xhtml',
-                        },
-                    },
+          },
+        },
+
+        bashls = {
+          -- No specific overrides needed beyond defaults
+        },
+
+        dockerls = {
+          filetypes = { 'dockerfile' },
+          settings = {
+            docker = {
+              languages = {
+                dockerfile = {
+                  enable = true,
                 },
-                settings = {
-                    emmet = {
-                        showSuggestionsAsSnippets = true,
-                        includeLanguages = {
-                            htmldjango = 'html'
-                        },
-                    },
-                },
+              },
             },
-            
-        }
+          },
+        },
 
-        -- Configure and start servers
-        for lsp, config in pairs(servers) do
-            -- Register configuration with on_attach and capabilities
-            vim.lsp.config(lsp, vim.tbl_extend('force', {
-                on_attach = on_attach,
-                capabilities = capabilities
-            }, config))
+        docker_compose_language_service = {
+          filetypes = { 'yaml.docker-compose' },
+          settings = {
+            telemetry = {
+              enable = false, -- Disable telemetry if not needed
+            },
+          },
+        },
 
-            -- Start server
-            vim.lsp.enable(lsp)
-        end
-    end
-}, -- Autocompletion plugins
-{'hrsh7th/nvim-cmp'}, {'hrsh7th/cmp-nvim-lsp'}, {'hrsh7th/cmp-buffer'}, -- Snippets
-{
+        emmet_ls = {
+          filetypes = { 'html', 'htmldjango', 'css' },
+          init_options = {
+            html = {
+              options = {
+                ['bem.enabled'] = false,
+                ['output.selfClosingStyle'] = 'xhtml',
+              },
+            },
+          },
+          settings = {
+            emmet = {
+              showSuggestionsAsSnippets = true,
+              includeLanguages = {
+                htmldjango = 'html',
+              },
+            },
+          },
+        },
+
+      }
+
+      -- Setup and start servers
+      for lsp, config in pairs(servers) do
+        -- Register configuration with on_attach and capabilities
+        -- The base configuration (cmd, root_dir, etc.) comes implicitly from nvim-lspconfig.
+        vim.lsp.config(lsp, vim.tbl_extend('force', {
+          on_attach = on_attach,
+          capabilities = capabilities,
+        }, config))
+
+        -- Start the server
+        vim.lsp.enable(lsp)
+      end
+    end,
+  },
+
+  -- Autocompletion plugins
+  { 'hrsh7th/nvim-cmp' },
+  { 'hrsh7th/cmp-nvim-lsp' },
+  { 'hrsh7th/cmp-buffer' },
+
+  -- Snippets
+  {
     'L3MON4D3/LuaSnip',
     config = function()
-        -- Neovim Snippets: ~/.config/nvim/lua/snippets.lua
-        local ok, _ = pcall(require, 'snippets')
-        if not ok then
-            print('Failed to load snippets.lua')
-        end
-    end
-}, {
+      -- Neovim Snippets: ~/.config/nvim/lua/snippets.lua
+      local ok, _ = pcall(require, 'snippets')
+      if not ok then
+        print('Failed to load snippets.lua')
+      end
+    end,
+  },
+
+  {
     'saadparwaiz1/cmp_luasnip',
     config = function()
-        local cmp = require('cmp')
-        cmp.setup({
-            snippet = {
-                expand = function(args)
-                    require('luasnip').lsp_expand(args.body)
-                end
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-Space>'] = cmp.mapping.complete(),
-                ['<CR>'] = cmp.mapping.confirm({
-                    behavior = cmp.ConfirmBehavior.Replace,
-                    select = true
-                }),
-                ['<Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_next_item()
-                    elseif require('luasnip').expand_or_jumpable() then
-                        require('luasnip').expand_or_jump()
-                    else
-                        fallback()
-                    end
-                end, {'i', 's'}),
-                ['<S-Tab>'] = cmp.mapping(function(fallback)
-                    if cmp.visible() then
-                        cmp.select_prev_item()
-                    elseif require('luasnip').jumpable(-1) then
-                        require('luasnip').jump(-1)
-                    else
-                        fallback()
-                    end
-                end, {'i', 's'})
-            }),
-            sources = {{
-                name = 'nvim_lsp',
-                max_item_count = 10
-            }, {
-                name = 'luasnip',
-                max_item_count = 5
-            }, {
-                name = 'buffer',
-                max_item_count = 5
-            }}
-        })
-    end
-}}
+      local cmp = require('cmp')
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<CR>'] = cmp.mapping.confirm({
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+          }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif require('luasnip').expand_or_jumpable() then
+              require('luasnip').expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif require('luasnip').jumpable(-1) then
+              require('luasnip').jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+        }),
+        sources = {
+          { name = 'nvim_lsp', max_item_count = 10 },
+          { name = 'luasnip', max_item_count = 5 },
+          { name = 'buffer', max_item_count = 5 },
+        },
+      })
+    end,
+  },
+}
