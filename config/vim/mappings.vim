@@ -181,6 +181,10 @@ nmap <F12> :set diff! <CR>
 " q<letter> - create macro, finish q
 " @<letter> - call macro
 " --------------------------------------------------------
+" vimdiff:
+" dp - move to another part
+" do - get from another part
+" --------------------------------------------------------
 " folding on leading spaces
 " set foldmethod=indent
 " folding on syntax
