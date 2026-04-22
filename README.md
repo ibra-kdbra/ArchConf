@@ -68,6 +68,35 @@
 
 ***
 
+#### Project Hierarchy
+
+```text
+Arch_config/
+├── config/                # Application configurations (dotfiles)
+│   ├── alacritty/         # Terminal emulator settings
+│   ├── dunst/             # Notification daemon
+│   ├── fish/              # Shell configuration and functions
+│   ├── i3/ openbox/ qtile/# Window manager setups
+│   ├── nvim/ vim/         # Text editor configs
+│   ├── polybar/           # Status bar
+│   ├── scripts/           # Custom utility scripts (VPN, volume, brightness)
+│   └── ...
+├── files/                 # System files and deployment assets
+│   ├── bashrc, profile    # Global terminal init files
+│   ├── apps/              # Additional .desktop applications
+│   ├── hwdb.d/ rules.d/   # System device and udev rules
+│   ├── xorg.conf.d/       # X11 configurations
+│   └── ...
+├── hooks/                 # Developer git hooks
+├── chroot                 # Arch-chroot automated installer sequence
+├── installer              # Main EFI/BIOS mount and base install script
+├── packages               # Desktop environments and package deployment config
+├── swapfile               # Swapfile provisioning script
+└── links                  # File linker and environment bootstrap
+```
+
+***
+
 #### for SSD users
 
 * enabled by default [Periodic TRIM](https://wiki.archlinux.org/title/Solid_state_drive#Periodic_TRIM)

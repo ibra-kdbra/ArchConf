@@ -365,12 +365,12 @@
     #default_icon = /path/to/icon
 
 [lan-display]
-    summary = "Соединение установлено"
-    body = "Вы подключены к «Проводное подключение *»."
+    summary = "Connection established"
+    body = "You are connected to *Wired connection*."
     skip_display = true
 
 [vpn-display]
-    summary = "Сообщение авторизации VPN"
+    summary = "VPN authorization message"
     skip_display = true
 
 # Every section that isn't one of the above is interpreted as a rules to

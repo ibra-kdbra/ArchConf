@@ -285,7 +285,7 @@ fi
 
 # Other packages:
 
-# mint-x-icons - тема значков Linux Mint
+# mint-x-icons - Linux Mint icon theme
 
 # wine|wine-staging winetricks - for windows applications
 # drivers & libs: https://github.com/lutris/docs/blob/master/InstallingDrivers.md
@@ -449,7 +449,7 @@ if [[ $de == "ibrakdbra_wm" ]]; then
     gsettings set org.gnome.desktop.interface icon-theme Obsidian-Aqua
 
     # gnome-screenshot settings
-    # gsettings set org.gnome.gnome-screenshot auto-save-directory "file:///home/$username/Загрузки/"
+    # gsettings set org.gnome.gnome-screenshot auto-save-directory "file:///home/$username/Downloads/"
 
     # backgrounds
     sudo rm /usr/share/backgrounds/archlinux/archlinux.stw
@@ -696,8 +696,8 @@ sudo localectl --no-convert set-x11-keymap us,gb "" "" grp:alt_shift_toggle
 ln -s ~/.config/vim/vimrc ~/.vimrc
 # install Vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-# install vim spell RU UTF-8
-# curl -fLo ~/.vim/spell/ru.utf-8.sug --create-dirs http://ftp.vim.org/vim/runtime/spell/ru.utf-8.sug
+# install vim spell EN UTF-8
+# curl -fLo ~/.vim/spell/en.utf-8.sug --create-dirs http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug
 # curl -fLo ~/.vim/spell/ru.utf-8.spl --create-dirs http://ftp.vim.org/vim/runtime/spell/ru.utf-8.spl
 echo; echo
 echo "####################"
