@@ -155,7 +155,7 @@ git pass pwgen trash-cli numlockx wget curl httpie
 fzf fd ripgrep jq tree highlight eza bat bat-extras git-delta ncdu
 screenfetch htop inxi cmatrix lm_sensors lsof strace
 atool p7zip unrar unzip zip
-openssh freerdp freerdp2 gufw rsync rclone
+openssh freerdp gufw rsync rclone
 openvpn networkmanager-openvpn wireguard-tools systemd-resolvconf sshuttle
 xorg xorg-xinit accountsservice
 pipewire wireplumber pipewire-alsa pipewire-pulse
@@ -484,10 +484,10 @@ if [[ $de == "koljasha_wm" ]]; then
     systemctl --user enable clipmenud.service
     # Rarely becomes dull, then:
     # # systemctl --user restart clipmenud.service
-    
+
     # screen link
     ln -s ~/.config/screen/screenrc ~/.screenrc
-    
+
     # distrobox Resolve Error
     # cp files/distroboxrc ~/.distroboxrc
 
@@ -1057,4 +1057,3 @@ read -n1 -p">"; echo
 sudo systemctl -i reboot
 
 ###############
-
