@@ -167,6 +167,7 @@ nmap <F12> :set diff! <CR>
 " '<letter> - go to start of line mark
 " `<letter> - go to mark
 " --------------------------------------------------------
+" '. or `. - last modified
 " '' or `` - go to previous position
 " ma - create mark
 " `a - go to mark a
@@ -209,4 +210,3 @@ nmap <F12> :set diff! <CR>
 " :mksession[!] [filename] - save session
 " :source [filename] - load session
 " --------------------------------------------------------
-
