@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# show memory like htop
+# show memory like htop | btop
 #
 
 function to_Gb {
@@ -16,7 +16,8 @@ total_memory=`to_Gb $total_memory`
 
 used_memory=`python -c 'import psutil;\
              memory = psutil.virtual_memory();\
-             print(memory.used/1024/1024 + memory.shared/1024/1024)' | cut -d'.' -f1`
+             print(memory.used/1024/1024)' | cut -d'.' -f1`
+            #  print(memory.used/1024/1024 + memory.shared/1024/1024)' | cut -d'.' -f1`
 
 if (( $used_memory > 1024 )); then
     used_memory=`to_Gb $used_memory`
@@ -25,4 +26,3 @@ else
 fi
 
 echo "$used_memory | $total_memory"
-

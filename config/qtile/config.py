@@ -691,7 +691,7 @@ my_bar = bar.Bar(
                    # padding=1),
 
         widget.Sep(padding=5),
-        MyMemory(format="{UsedShared: .2f}{mm} |{MemTotal: .2f}{mm}",
+        MyMemory(format="{MemUsed: .2f}{mm} |{MemTotal: .2f}{mm}",
                       measure_mem="G",
                       mouse_callbacks = {"Button1": lambda: qtile.spawn("terminator -x htop")},
                       fmt="<span color='#ffb52a'></span>{}",
