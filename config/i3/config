@@ -328,9 +328,11 @@ for_window [class="Gnome-boxes"] layout tabbed
 
 assign [class="remmina"] $workspace10
 assign [class="xfreerdp"] $workspace10
+assign [class="Gvncviewer"] $workspace10
 assign [class="Google-chrome"] $workspace10
 for_window [class="remmina"] layout tabbed
 for_window [class="xfreerdp"] layout tabbed
+for_window [class="Gvncviewer"] layout tabbed
 for_window [class="Google-chrome"] layout tabbed
 
 # Floating mode
@@ -346,4 +348,3 @@ for_window [ class="isaac-ng.exe" ] floating enable
 exec --no-startup-id ~/.config/i3/autostart.sh
 
 # vim:ft=i3config
-
