@@ -23,25 +23,23 @@ local conds = require("luasnip.extras.expand_conditions")
 -- where the actual snippet-definitions start.
 
 -- Every unspecified option will be set to the default.
-ls.config.set_config(
-    {
-        history = true,
-        -- Update more often, :h events for more info.
-        updateevents = "TextChanged,TextChangedI",
-        ext_opts = {
-            [types.choiceNode] = {
-                active = {
-                    virt_text = {{"choiceNode", "Comment"}}
-                }
+ls.config.set_config({
+    history = true,
+    -- Update more often, :h events for more info.
+    updateevents = "TextChanged,TextChangedI",
+    ext_opts = {
+        [types.choiceNode] = {
+            active = {
+                virt_text = {{"choiceNode", "Comment"}}
             }
-        },
-        -- treesitter-hl has 100, use something higher (default is 200).
-        ext_base_prio = 300,
-        -- minimal increase in priority.
-        ext_prio_increase = 1,
-        enable_autosnippets = true
-    }
-)
+        }
+    },
+    -- treesitter-hl has 100, use something higher (default is 200).
+    ext_base_prio = 300,
+    -- minimal increase in priority.
+    ext_prio_increase = 1,
+    enable_autosnippets = true
+})
 
 -- args is a table, where 1 is the text in Placeholder 1, 2 the text in
 -- placeholder 2,...
@@ -52,17 +50,8 @@ end
 -- 'recursive' dynamic snippet. Expands to some text followed by itself.
 local rec_ls
 rec_ls = function()
-    return sn(
-        nil,
-        c(
-            1,
-            {
-                -- Order is important, sn(...) first would cause infinite loop of expansion.
-                t(""),
-                sn(nil, {t({"", "\t\\item "}), i(1), d(2, rec_ls, {})})
-            }
-        )
-    )
+    return sn(nil, c(1, { -- Order is important, sn(...) first would cause infinite loop of expansion.
+    t(""), sn(nil, {t({"", "\t\\item "}), i(1), d(2, rec_ls, {})})}))
 end
 
 -- complicated function for dynamicNode.
@@ -70,11 +59,7 @@ local function jdocsnip(args, _, old_state)
     -- !!! old_state is used to preserve user-input here. DON'T DO IT THAT WAY!
     -- Using a restoreNode instead is much easier.
     -- View this only as an example on how old_state functions.
-    local nodes = {
-        t({"/**", " * "}),
-        i(1, "A short Description"),
-        t({"", ""})
-    }
+    local nodes = {t({"/**", " * "}), i(1, "A short Description"), t({"", ""})}
 
     -- These will be merged with the snippet; that way, should the snippet be updated,
     -- some user input eg. text can be referred to in the new snippet.
@@ -196,122 +181,35 @@ end
 -- require("luasnip.loaders.from_snipmate").lazy_load() -- Lazy loading
 
 --
--- Snippets by Koljasha
+-- Snippets by ibrakdbra
 --
 
-ls.add_snippets(
-    "python",
-    {
-        -- shebang
-        s(
-            "#!",
-            {
-                t({"#!/usr/bin/env "}),
-                i(1, "python"),
-                t({"", "", ""}),
-                i(0)
-            }
-        ),
-        -- python __name__ == '__main__'
-        s(
-            "ifmain",
-            {
-                t({"", "", ""}),
-                t({"def main("}),
-                i(1),
-                t({"):"}),
-                t({"", "\t"}),
-                i(2, "pass"),
-                t({"", "", "if __name__ == '__main__':"}),
-                t({"", "\t"}),
-                t({"main()"}),
-                t({"", ""}),
-                i(0)
-            }
-        ),
-        -- python function
-        s(
-            "def",
-            {
-                t({"def "}),
-                i(1, "functionName"),
-                t({"("}),
-                i(2),
-                t({"):"}),
-                t({"", "\t"}),
-                i(3, "pass"),
-                t({"", ""}),
-                i(0)
-            }
-        ),
-        -- python class
-        s(
-            "class",
-            {
-                t({"class "}),
-                i(1, "ClassName"),
-                t({"("}),
-                i(2),
-                t({"):"}),
-                t({"", "\t"}),
-                t({"def __init__(self"}),
-                i(3),
-                t({"):"}),
-                t({"", "\t\t"}),
-                i(4, "pass"),
-                t({"", ""}),
-                i(0)
-            }
-        )
-    },
-    {
-        key = "python"
-    }
-)
+ls.add_snippets("python", { -- shebang
+s("#!", {t({"#!/usr/bin/env "}), i(1, "python"), t({"", "", ""}), i(0)}), -- python __name__ == '__main__'
+s("ifmain", {t({"", "", ""}), t({"def main("}), i(1), t({"):"}), t({"", "\t"}), i(2, "pass"),
+             t({"", "", "if __name__ == '__main__':"}), t({"", "\t"}), t({"main()"}), t({"", ""}), i(0)}),
+-- python function
+s("def", {t({"def "}), i(1, "functionName"), t({"("}), i(2), t({"):"}), t({"", "\t"}), i(3, "pass"), t({"", ""}), i(0)}),
+-- python class
+s("class",
+    {t({"class "}), i(1, "ClassName"), t({"("}), i(2), t({"):"}), t({"", "\t"}), t({"def __init__(self"}), i(3),
+     t({"):"}), t({"", "\t\t"}), i(4, "pass"), t({"", ""}), i(0)})}, {
+    key = "python"
+})
 
-ls.add_snippets(
-    "sh",
-    {
-        -- shebang
-        s(
-            "#!",
-            {
-                t({"#!/usr/bin/env "}),
-                i(1, "bash"),
-                t({"", "", ""}),
-                i(0)
-            }
-        )
-    },
-    {
-        key = "sh"
-    }
-)
+ls.add_snippets("sh", { -- shebang
+s("#!", {t({"#!/usr/bin/env "}), i(1, "bash"), t({"", "", ""}), i(0)})}, {
+    key = "sh"
+})
 
-ls.add_snippets(
-    "html",
-    {
-        -- html:5
-        s(
-            "html:5",
-            {
-                t({"<!DOCTYPE html>", '<html lang="ru">', "<head>"}),
-                t({"", '\t<meta charset="utf-8" />'}),
-                t({"", "\t<title>"}),
-                i(1, "MySite"),
-                t({"</title>"}),
-                t({"", '\t<meta name="viewport" content="width=device-width, initial-scale=1.0" />'}),
-                t({"", "</head>", "<body>"}),
-                t({"", ""}),
-                i(0),
-                t({"", "</body>", "</html>"})
-            }
-        )
-    },
-    {
-        key = "html"
-    }
-)
+ls.add_snippets("html", { -- html:5
+s("html:5",
+    {t({"<!DOCTYPE html>", '<html lang="ru">', "<head>"}), t({"", '\t<meta charset="utf-8" />'}), t({"", "\t<title>"}),
+     i(1, "MySite"), t({"</title>"}),
+     t({"", '\t<meta name="viewport" content="width=device-width, initial-scale=1.0" />'}),
+     t({"", "</head>", "<body>"}), t({"", ""}), i(0), t({"", "</body>", "</html>"})})}, {
+    key = "html"
+})
 
 -- set type to "autosnippets" for adding autotriggered snippets.
 -- ls.add_snippets("all", {

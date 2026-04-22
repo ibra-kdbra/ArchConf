@@ -7,7 +7,7 @@ export LANG=en_US.UTF8
 # editor as vim
 export EDITOR=vim
 
-# environment for Koljasha DE
+# environment for ibrakdbra DE
 if [[ "$XDG_SESSION_DESKTOP" =~ (qtile|i3|openbox) ]]; then
 
     # environment for QT applications

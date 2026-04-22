@@ -98,7 +98,7 @@ while [[ $de != "1" ]] && [[ $de != "2" ]] && [[ $de != "3" ]] && [[ $de != "4" 
     echo; echo
     echo "####################"
     echo "What Desktop Environment install?"
-    echo "1) Qtile, i3wm, Openbox: WM settings by Koljasha"
+    echo "1) Qtile, i3wm, Openbox: WM settings by ibrakdbra"
     echo "2) Xfce default settings"
     echo "3) Lxde default settings"
     echo "4) Lxqt default settings"
@@ -116,7 +116,7 @@ done
 echo; echo
 
 if [[ $de == "1" ]]; then
-    de="koljasha_wm"
+    de="ibrakdbra_wm"
 elif [[ $de == "2" ]]; then
     de="xfce"
 elif [[ $de == "3" ]]; then
@@ -171,7 +171,7 @@ firefox
 xdg-desktop-portal-gtk flatpak
 "
 
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     packages="
     $packages
     lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
@@ -339,7 +339,7 @@ packages_aur="
 xkb-switch
 "
 
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     packages_aur="
     $packages_aur
     arc-gtk-theme
@@ -412,7 +412,7 @@ cp files/gpg.conf ~/.gnupg/gpg.conf
 mkdir -p ~/.config
 mkdir -p ~/.local/share/applications
 
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     # ~/.config
     cp -r config/* ~/.config/
 
@@ -714,7 +714,7 @@ echo; echo
 sed -i 's/desert/PaperColor/' ~/.config/vim/colors.vim
 
 # NeoVim
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     # install Vim-plug
     # curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     # install nvim Vim-plug plugins
@@ -722,7 +722,7 @@ if [[ $de == "koljasha_wm" ]]; then
 fi
 
 # Gvim
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     ln -s ~/.config/vim/gvimrc ~/.gvimrc
 
     sudo cp /usr/share/applications/gvim.desktop /usr/share/applications/evim.desktop
@@ -820,7 +820,7 @@ sudo systemctl start pkgfile-update.service
 sudo systemctl enable fstrim.timer
 
 # login manager
-if [[ $de == "koljasha_wm" ]] \
+if [[ $de == "ibrakdbra_wm" ]] \
 || [[ $de == "xfce" ]] || [[ $de == "lxde" ]] || [[ $de == "lxqt" ]] \
 || [[ $de == "mate" ]] || [[ $de == "cinnamon" ]] || [[ $de == "deepin" ]]; then
     sudo systemctl enable lightdm.service
@@ -854,7 +854,7 @@ fi
 echo "Ok"
 
 
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     # Update Arch packages with yay
     systemctl --user enable yay_update.timer
 
@@ -875,7 +875,7 @@ fi
 
 ###############
 
-if [[ $de == "koljasha_wm" ]]; then
+if [[ $de == "ibrakdbra_wm" ]]; then
     # enable change backgrounds
     while [[ $chbg != "1" ]] && [[ $chbg != "2" ]]; do
         echo; echo

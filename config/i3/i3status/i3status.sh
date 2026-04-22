@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# script i3status extended by Koljasha
+# script i3status extended by ibrakdbra
 
 function func_language {
     if [[ $(xset -q | awk '{print $4}' | sed -n 8p) = "off"  ]]
