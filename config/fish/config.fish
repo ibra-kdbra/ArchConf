@@ -53,6 +53,8 @@ alias rgrep="rg"
 alias man="batman"
 alias diff="batdiff --delta"
 
+alias pass-gen="pwgen -s 45 -N 5 -1 -y -r'{}()[]\\`|'"
+
 # alias for Debian apt|nala
 if test -f /usr/bin/apt
     if test -f /usr/bin/nala
@@ -65,9 +67,9 @@ end
 # alias for grub-update
 alias update-grub="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 
-# 
+#
 # Vpn
-# 
+#
 
 # aliases for WireGuard
 alias wg-up="sudo wg-quick up wg0"
@@ -96,4 +98,3 @@ alias vpn-status="openvpn3 sessions-list"
 
 # aliases for distrobox
 # alias distrobox_create="distrobox create --volume /run/mount/storage:/run/mount/storage:rw"
-
